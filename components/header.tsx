@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, X, Home } from "lucide-react"
+import Image from "next/image"
+import { Menu, X } from "lucide-react"
 import { useState } from "react"
 
 export function Header() {
@@ -10,10 +11,14 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center">
-          <div className="bg-blue-900 p-2 rounded-lg">
-            <Home className="text-white w-8 h-8" />
-          </div>
+        <Link href="/" className="flex items-center justify-center">
+          <Image
+            src="https://i.postimg.cc/RCpPyW1J/a-minimal-flat-logo-design-featuring-a-s-BL6m-W69RSzq4-QIcfnqli-A-5Ts1s64e-SAOMba-Sh-FZmc-BA.jpg"
+            alt="VJ-PG's Logo"
+            width={48}
+            height={48}
+            className="rounded-full object-cover"
+          />
         </Link>
 
         {/* Desktop Navigation */}

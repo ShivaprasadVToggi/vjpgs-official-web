@@ -3,32 +3,68 @@
 import { useMemo } from "react"
 import { PGCard } from "@/components/pg-card"
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { RotateCcw } from "lucide-react"
 import { pgs } from "@/lib/data"
-import { PRICE_THRESHOLDS } from "@/lib/filters"
+import { PRICE_THRESHOLDS, DISTANCE_VALUES } from "@/lib/filters"
 import type { GenderFilter, PriceFilter, DistanceFilter } from "@/lib/filters"
 
 interface FeaturedPGsProps {
+  searchQuery: string
   gender: GenderFilter
+  setGender: (value: GenderFilter) => void
   price: PriceFilter
+  setPrice: (value: PriceFilter) => void
   distance: DistanceFilter
+  setDistance: (value: DistanceFilter) => void
   onResetFilters: () => void
 }
 
 export function FeaturedPGs({
+  searchQuery,
   gender,
+  setGender,
   price,
+  setPrice,
   distance,
+  setDistance,
   onResetFilters,
 }: FeaturedPGsProps) {
   const filteredPGs = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+
     return pgs.filter((pg) => {
+      // Search filter: name, college, or location
+      if (query) {
+        const matchesSearch =
+          pg.name.toLowerCase().includes(query) ||
+          pg.college.toLowerCase().includes(query) ||
+          pg.location.toLowerCase().includes(query)
+        if (!matchesSearch) return false
+      }
+
+      // Gender filter
       if (gender !== "All" && pg.category !== gender) return false
+
+      // Price filter
       if (price !== "Any" && pg.price >= PRICE_THRESHOLDS[price]) return false
-      if (distance !== "Any" && pg.distanceTag !== distance) return false
+
+      // Distance filter (cumulative max-distance: <3km shows <1km AND <3km)
+      if (distance !== "Any") {
+        const maxDistanceKm = DISTANCE_VALUES[distance] ?? Infinity
+        const pgDistanceKm = DISTANCE_VALUES[pg.distanceTag] ?? Infinity
+        if (pgDistanceKm > maxDistanceKm) return false
+      }
+
       return true
     })
-  }, [gender, price, distance])
+  }, [searchQuery, gender, price, distance])
 
   return (
     <section id="listings" className="bg-background py-16 sm:py-20 lg:py-24 scroll-mt-16">
@@ -42,14 +78,55 @@ export function FeaturedPGs({
               Hand-picked accommodations with exclusive VJ-PG's discounts
             </p>
           </div>
-          <Button
-            variant="outline"
-            className="group bg-transparent"
-            onClick={onResetFilters}
-          >
-            View all listings
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Button>
+        </div>
+
+        {/* Filter Toolbar - Amazon-style */}
+        <div className="mt-8 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+            <div className="flex flex-1 flex-wrap items-center gap-3">
+              <Select value={gender} onValueChange={(v) => setGender(v as GenderFilter)}>
+                <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
+                  <SelectValue placeholder="Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All</SelectItem>
+                  <SelectItem value="Boys">Boys</SelectItem>
+                  <SelectItem value="Girls">Girls</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={price} onValueChange={(v) => setPrice(v as PriceFilter)}>
+                <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
+                  <SelectValue placeholder="Max Price" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Any">Any</SelectItem>
+                  <SelectItem value="8k">Under ₹8k</SelectItem>
+                  <SelectItem value="10k">Under ₹10k</SelectItem>
+                  <SelectItem value="12k">Under ₹12k</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={distance} onValueChange={(v) => setDistance(v as DistanceFilter)}>
+                <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
+                  <SelectValue placeholder="Distance" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Any">Any</SelectItem>
+                  <SelectItem value="<1km">{"<1km"}</SelectItem>
+                  <SelectItem value="<3km">{"<3km"}</SelectItem>
+                  <SelectItem value="<5km">{"<5km"}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onResetFilters}
+              className="shrink-0 border-gray-300 bg-white hover:bg-gray-50"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Reset Filters
+            </Button>
+          </div>
         </div>
 
         {filteredPGs.length > 0 ? (
@@ -74,10 +151,10 @@ export function FeaturedPGs({
           <div className="mt-10 flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 py-16 text-center">
             <p className="text-lg font-medium text-foreground">No PGs found</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Try adjusting your filters or view all listings
+              Try adjusting your search or filters
             </p>
             <Button variant="outline" className="mt-4" onClick={onResetFilters}>
-              View all listings
+              Reset Filters
             </Button>
           </div>
         )}

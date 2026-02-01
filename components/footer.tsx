@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { MessageCircle, Instagram, Mail, Home } from "lucide-react"
+import Image from "next/image"
+import { MessageCircle, Instagram, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function Footer() {
@@ -11,9 +12,13 @@ export function Footer() {
         <div className="flex flex-col items-center gap-8">
           {/* Brand */}
           <Link href="/" className="flex items-center">
-            <div className="bg-blue-900 p-2 rounded-lg">
-              <Home className="text-white w-8 h-8" />
-            </div>
+            <Image
+              src="https://i.postimg.cc/RCpPyW1J/a-minimal-flat-logo-design-featuring-a-s-BL6m-W69RSzq4-QIcfnqli-A-5Ts1s64e-SAOMba-Sh-FZmc-BA.jpg"
+              alt="VJ-PG's Logo"
+              width={48}
+              height={48}
+              className="rounded-full object-cover"
+            />
           </Link>
 
           {/* List Property Button */}
