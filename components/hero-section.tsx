@@ -1,8 +1,6 @@
 "use client"
 
-import { Search, MapPin, Percent, Camera, BadgeCheck, ShieldCheck } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { Percent, Camera, BadgeCheck, ShieldCheck } from "lucide-react"
 import {
   Select,
   SelectContent,
@@ -10,27 +8,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import type { GenderFilter, PriceFilter, DistanceFilter } from "@/lib/filters"
 
-const colleges = [
-  "Cambridge Institute of Technology",
-  "Garden City University",
-]
+interface HeroSectionProps {
+  gender: GenderFilter
+  setGender: (value: GenderFilter) => void
+  price: PriceFilter
+  setPrice: (value: PriceFilter) => void
+  distance: DistanceFilter
+  setDistance: (value: DistanceFilter) => void
+}
 
-const popularLocations = [
-  "K.R. Puram",
-  "Old Madras Road",
-  "Near Cambridge",
-  "Near Garden City",
-]
-
-export function HeroSection() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [showSuggestions, setShowSuggestions] = useState(false)
-
-  const filteredColleges = colleges.filter((college) =>
-    college.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-
+export function HeroSection({
+  gender,
+  setGender,
+  price,
+  setPrice,
+  distance,
+  setDistance,
+}: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden bg-card py-20 sm:py-28 lg:py-32">
       {/* Background decoration */}
@@ -60,106 +56,42 @@ export function HeroSection() {
             You must book via VJ-PG's to claim the lower price.
           </p>
 
-          {/* Search Bar */}
-          <div className="relative mx-auto mt-10 max-w-xl">
-            <div className="relative flex items-center rounded-xl border border-border bg-card shadow-lg">
-              <div className="flex items-center pl-4">
-                <MapPin className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search by college..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value)
-                  setShowSuggestions(true)
-                }}
-                onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                className="flex-1 bg-transparent px-3 py-5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
-              />
-              <div className="pr-2">
-                <Button size="lg" className="rounded-lg">
-                  <Search className="mr-2 h-4 w-4" />
-                  Search
-                </Button>
-              </div>
-            </div>
-
-            {/* Suggestions dropdown */}
-            {showSuggestions && (
-              <div className="absolute left-0 right-0 top-full z-10 mt-2 rounded-xl border border-border bg-card p-2 shadow-lg">
-                {(searchQuery ? filteredColleges : colleges).map((college) => (
-                  <button
-                    key={college}
-                    type="button"
-                    className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-left text-sm text-foreground transition-colors hover:bg-accent"
-                    onClick={() => {
-                      setSearchQuery(college)
-                      setShowSuggestions(false)
-                    }}
-                  >
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    {college}
-                  </button>
-                ))}
-                {searchQuery && filteredColleges.length === 0 && (
-                  <p className="px-4 py-3 text-sm text-muted-foreground">No colleges found</p>
-                )}
-              </div>
-            )}
-          </div>
-
           {/* Filter Dropdowns */}
-          <div className="mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-center gap-3">
-            <Select>
+          <div className="mx-auto mt-10 flex max-w-xl flex-wrap items-center justify-center gap-3">
+            <Select value={gender} onValueChange={(v) => setGender(v as GenderFilter)}>
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="Gender" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="boys">Boys</SelectItem>
-                <SelectItem value="girls">Girls</SelectItem>
-                <SelectItem value="coed">Co-ed</SelectItem>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="Boys">Boys</SelectItem>
+                <SelectItem value="Girls">Girls</SelectItem>
               </SelectContent>
             </Select>
 
-            <Select>
+            <Select value={price} onValueChange={(v) => setPrice(v as PriceFilter)}>
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="Max Price" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="8000">₹8k</SelectItem>
-                <SelectItem value="10000">₹10k</SelectItem>
-                <SelectItem value="12000">₹12k</SelectItem>
-                <SelectItem value="15000">₹15k</SelectItem>
+                <SelectItem value="Any">Any</SelectItem>
+                <SelectItem value="8k">Under ₹8k</SelectItem>
+                <SelectItem value="10k">Under ₹10k</SelectItem>
+                <SelectItem value="12k">Under ₹12k</SelectItem>
               </SelectContent>
             </Select>
 
-            <Select>
+            <Select value={distance} onValueChange={(v) => setDistance(v as DistanceFilter)}>
               <SelectTrigger className="w-32">
                 <SelectValue placeholder="Distance" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">{"<1km"}</SelectItem>
-                <SelectItem value="3">{"<3km"}</SelectItem>
-                <SelectItem value="5">{"<5km"}</SelectItem>
+                <SelectItem value="Any">Any</SelectItem>
+                <SelectItem value="<1km">{"<1km"}</SelectItem>
+                <SelectItem value="<3km">{"<3km"}</SelectItem>
+                <SelectItem value="<5km">{"<5km"}</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-
-          {/* Popular searches */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-sm text-muted-foreground">Popular:</span>
-            {popularLocations.map((location) => (
-              <button
-                key={location}
-                type="button"
-                onClick={() => setSearchQuery(location)}
-                className="rounded-full bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground transition-colors hover:bg-accent"
-              >
-                {location}
-              </button>
-            ))}
           </div>
 
           {/* Value Props */}

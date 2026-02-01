@@ -41,7 +41,7 @@ export function PGCard({
   const savings = ownerPrice - vjPrice
 
   const whatsappMessage = encodeURIComponent(
-    `Hi VJ-PG's! My name is [____] from [____] College. I am interested in booking ${name} through your website to claim the FLAT ₹2,000 Discount. Please let me know the next steps for a visit.`
+    `Hi VJ-PG's! My name is [____] from [____] College. I am interested in booking ${name} (₹${vjPrice.toLocaleString()}/month) through your website to claim the FLAT ₹2,000 Discount. Please let me know the next steps for a visit.`
   )
   const whatsappLink = `https://wa.me/919743055967?text=${whatsappMessage}`
 

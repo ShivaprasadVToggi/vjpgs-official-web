@@ -1,22 +1,19 @@
 import Link from "next/link"
-import { MessageCircle, Instagram, Mail } from "lucide-react"
+import { MessageCircle, Instagram, Mail, Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function Footer() {
   const listPropertyLink = "https://wa.me/919743055967?text=Hi%20VJ-PGs%2C%20I%20want%20to%20list%20my%20property."
 
   return (
-    <footer className="border-t border-border bg-card">
+    <footer id="owners" className="border-t border-border bg-card scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-8">
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-2">
-            <img 
-              src="https://i.postimg.cc/xTz4cDz0/Screenshot-2026-01-31-191427.png" 
-              alt="VJ-PG's Logo" 
-              className="h-[45px] w-auto object-contain"
-            />
-            <span className="text-xl font-bold text-foreground font-sans">VJ-PG's</span>
+          <Link href="/" className="flex items-center">
+            <div className="bg-blue-900 p-2 rounded-lg">
+              <Home className="text-white w-8 h-8" />
+            </div>
           </Link>
 
           {/* List Property Button */}

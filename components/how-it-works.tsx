@@ -23,7 +23,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="bg-secondary py-16">
+    <section id="how-it-works" className="bg-secondary py-16 scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h2 className="mb-12 text-center text-2xl font-bold text-foreground sm:text-3xl">
           How It Works

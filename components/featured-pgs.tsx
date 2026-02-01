@@ -1,88 +1,37 @@
+"use client"
+
+import { useMemo } from "react"
 import { PGCard } from "@/components/pg-card"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import { pgs } from "@/lib/data"
+import { PRICE_THRESHOLDS } from "@/lib/filters"
+import type { GenderFilter, PriceFilter, DistanceFilter } from "@/lib/filters"
 
-const featuredPGs = [
-  {
-    name: "Sri Venkateshwara Luxury Ladies PG",
-    location: "Girls | Ramamurthy Nagar",
-    proximityText: "Near Yamaha Showroom (10m walk to College)",
-    ownerPrice: 11000,
-    vjPrice: 9000,
-    images: [
-      "https://i.postimg.cc/tRFdLq08/ven.jpg",
-      "https://i.postimg.cc/7hCSt4yF/ven-1.jpg",
-      "https://i.postimg.cc/XqZ91W0h/ven-2.jpg",
-      "https://i.postimg.cc/Rh3wpmzY/ven-3.jpg",
-      "https://i.postimg.cc/SRXc14pv/ven-4.jpg",
-      "https://i.postimg.cc/XqZ91W0m/ven-5.jpg",
-    ],
-    amenities: ["WiFi", "Meals", "Balcony", "Security"],
-    gender: "girls" as const,
-    availability: true,
-    specialBadge: "VJ Price Guarantee",
-  },
-  {
-    name: "Sri Balaji PG for Gents",
-    location: "Boys | TC Palya",
-    proximityText: "8 Mins walk from Garden City Campus",
-    ownerPrice: 9000,
-    vjPrice: 7000,
-    images: ["https://i.postimg.cc/y8prk18F/bala-gen.jpg"],
-    amenities: ["WiFi", "Meals", "Laundry"],
-    gender: "boys" as const,
-    availability: true,
-    specialBadge: "VJ Price Guarantee",
-  },
-  {
-    name: "Royal Inn Luxury Ladies PG",
-    location: "Girls | Luxury Stay",
-    proximityText: "5 Mins from TC Palya Signal",
-    ownerPrice: 13500,
-    vjPrice: 11500,
-    images: [
-      "https://i.postimg.cc/kXnjs6Vt/royal.jpg",
-      "https://i.postimg.cc/QdDW11HV/royal-1.jpg",
-      "https://i.postimg.cc/0yvJDDbz/royal-2.jpg",
-      "https://i.postimg.cc/zGNRKKVV/royal-3.jpg",
-    ],
-    amenities: ["WiFi", "Meals", "Gym", "Security"],
-    gender: "girls" as const,
-    availability: true,
-    specialBadge: "VJ Price Guarantee",
-  },
-  {
-    name: "Sri Lakshmi Gents PG (New Building)",
-    location: "Boys | KR Puram",
-    proximityText: "5 Mins walk from CIT Back Gate",
-    ownerPrice: 9500,
-    vjPrice: 7500,
-    images: ["https://i.postimg.cc/QtYLDQKv/lax.jpg"],
-    amenities: ["WiFi", "Meals", "Laundry"],
-    gender: "boys" as const,
-    availability: true,
-    specialBadge: "VJ Price Guarantee",
-  },
-  {
-    name: "Balaji Ladies PG",
-    location: "Girls | Near Cambridge",
-    proximityText: "2 Mins from CIT Main Entrance",
-    ownerPrice: 10000,
-    vjPrice: 8000,
-    images: [
-      "https://i.postimg.cc/NjdZm8pD/bala-g.jpg",
-      "https://i.postimg.cc/nrTN2vpP/bala-g-1.jpg",
-    ],
-    amenities: ["WiFi", "Meals", "Security", "Gated"],
-    gender: "girls" as const,
-    availability: true,
-    specialBadge: "VJ Price Guarantee",
-  },
-]
+interface FeaturedPGsProps {
+  gender: GenderFilter
+  price: PriceFilter
+  distance: DistanceFilter
+  onResetFilters: () => void
+}
 
-export function FeaturedPGs() {
+export function FeaturedPGs({
+  gender,
+  price,
+  distance,
+  onResetFilters,
+}: FeaturedPGsProps) {
+  const filteredPGs = useMemo(() => {
+    return pgs.filter((pg) => {
+      if (gender !== "All" && pg.category !== gender) return false
+      if (price !== "Any" && pg.price >= PRICE_THRESHOLDS[price]) return false
+      if (distance !== "Any" && pg.distanceTag !== distance) return false
+      return true
+    })
+  }, [gender, price, distance])
+
   return (
-    <section className="bg-background py-16 sm:py-20 lg:py-24">
+    <section id="listings" className="bg-background py-16 sm:py-20 lg:py-24 scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
@@ -93,17 +42,45 @@ export function FeaturedPGs() {
               Hand-picked accommodations with exclusive VJ-PG's discounts
             </p>
           </div>
-          <Button variant="outline" className="group bg-transparent">
+          <Button
+            variant="outline"
+            className="group bg-transparent"
+            onClick={onResetFilters}
+          >
             View all listings
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredPGs.map((pg) => (
-            <PGCard key={pg.name} {...pg} />
-          ))}
-        </div>
+        {filteredPGs.length > 0 ? (
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredPGs.map((pg) => (
+              <PGCard
+                key={pg.id}
+                name={pg.name}
+                location={`${pg.category} | ${pg.college}`}
+                proximityText={pg.location}
+                ownerPrice={pg.ownerPrice}
+                vjPrice={pg.price}
+                images={pg.carousel}
+                amenities={[]}
+                gender={pg.category.toLowerCase() as "boys" | "girls"}
+                availability={true}
+                specialBadge="VJ Price Guarantee"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-10 flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 py-16 text-center">
+            <p className="text-lg font-medium text-foreground">No PGs found</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Try adjusting your filters or view all listings
+            </p>
+            <Button variant="outline" className="mt-4" onClick={onResetFilters}>
+              View all listings
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   )
