@@ -24,6 +24,7 @@ interface FeaturedPGsProps {
   distance: DistanceFilter
   setDistance: (value: DistanceFilter) => void
   onResetFilters: () => void
+  activeCollege: "cambridge" | "gardencity"
 }
 
 export function FeaturedPGs({
@@ -35,6 +36,7 @@ export function FeaturedPGs({
   distance,
   setDistance,
   onResetFilters,
+  activeCollege,
 }: FeaturedPGsProps) {
   const filteredPGs = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
@@ -44,8 +46,8 @@ export function FeaturedPGs({
       if (query) {
         const matchesSearch =
           pg.name.toLowerCase().includes(query) ||
-          pg.college.toLowerCase().includes(query) ||
-          pg.location.toLowerCase().includes(query)
+          (activeCollege === "cambridge" && pg.distances.cambridge < Infinity && "cambridge".includes(query)) ||
+          (activeCollege === "gardencity" && pg.distances.gardencity < Infinity && "garden city".includes(query))
         if (!matchesSearch) return false
       }
 
@@ -57,8 +59,8 @@ export function FeaturedPGs({
 
       // Distance filter (cumulative max-distance: <3km shows <1km AND <3km)
       if (distance !== "Any") {
-        const maxDistanceKm = DISTANCE_VALUES[distance] ?? Infinity
-        const pgDistanceKm = DISTANCE_VALUES[pg.distanceTag] ?? Infinity
+        const maxDistanceKm = DISTANCE_VALUES[distance]
+        const pgDistanceKm = pg.distances[activeCollege]
         if (pgDistanceKm > maxDistanceKm) return false
       }
 
@@ -135,8 +137,8 @@ export function FeaturedPGs({
               <PGCard
                 key={pg.id}
                 name={pg.name}
-                location={`${pg.category} | ${pg.college}`}
-                proximityText={pg.location}
+                location={`${pg.category} | ${activeCollege === "cambridge" ? "Cambridge" : "Garden City"}`}
+                proximityText={`📍 ${pg.distances[activeCollege]} km from ${activeCollege === "cambridge" ? "Cambridge" : "Garden City"}`}
                 ownerPrice={pg.ownerPrice}
                 vjPrice={pg.price}
                 images={pg.carousel}

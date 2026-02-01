@@ -9,6 +9,7 @@ import { Footer } from "@/components/footer"
 import type { GenderFilter, PriceFilter, DistanceFilter } from "@/lib/filters"
 
 export default function Home() {
+  const [activeCollege, setActiveCollege] = useState<"cambridge" | "gardencity">("cambridge")
   const [searchQuery, setSearchQuery] = useState("")
   const [gender, setGender] = useState<GenderFilter>("All")
   const [price, setPrice] = useState<PriceFilter>("Any")
@@ -19,15 +20,22 @@ export default function Home() {
     setGender("All")
     setPrice("Any")
     setDistance("Any")
+    setActiveCollege("cambridge")
   }
 
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
-        <HeroSection searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <HeroSection
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          activeCollege={activeCollege}
+          setActiveCollege={setActiveCollege}
+        />
         <FeaturedPGs
           searchQuery={searchQuery}
+          activeCollege={activeCollege}
           gender={gender}
           setGender={setGender}
           price={price}

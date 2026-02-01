@@ -14,9 +14,11 @@ const popularLocations = [
 interface HeroSectionProps {
   searchQuery: string
   setSearchQuery: (value: string) => void
+  activeCollege: "cambridge" | "gardencity"
+  setActiveCollege: (value: "cambridge" | "gardencity") => void
 }
 
-export function HeroSection({ searchQuery, setSearchQuery }: HeroSectionProps) {
+export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setActiveCollege }: HeroSectionProps) {
   return (
     <section className="relative overflow-hidden bg-card py-20 sm:py-28 lg:py-32">
       {/* Background decoration */}
@@ -56,7 +58,14 @@ export function HeroSection({ searchQuery, setSearchQuery }: HeroSectionProps) {
                 type="text"
                 placeholder="Search by college, location..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  if (e.target.value.toLowerCase().includes("garden")) {
+                    setActiveCollege("gardencity")
+                  } else if (e.target.value.toLowerCase().includes("cambridge")) {
+                    setActiveCollege("cambridge")
+                  }
+                }}
                 className="flex-1 bg-transparent px-3 py-5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
               />
               <Button
@@ -80,6 +89,17 @@ export function HeroSection({ searchQuery, setSearchQuery }: HeroSectionProps) {
                 type="button"
                 onClick={() => {
                   setSearchQuery(location)
+                  if (location.toLowerCase().includes("garden")) { // Update activeCollege on popular tag click
+                    setActiveCollege("gardencity")
+                  } else if (location.toLowerCase().includes("cambridge")) {
+                    setActiveCollege("cambridge")
+                  } else if (location.toLowerCase().includes("k.r. puram")) {
+                    setActiveCollege("cambridge") // Defaulting based on assumed proximity
+                  } else if (location.toLowerCase().includes("tc palya")) {
+                    setActiveCollege("gardencity") // Defaulting based on assumed proximity
+                  } else if (location.toLowerCase().includes("ramamurthy nagar")) {
+                    setActiveCollege("cambridge") // Defaulting based on assumed proximity
+                  }
                   document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" })
                 }}
                 className="rounded-full bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground transition-colors hover:bg-accent"
