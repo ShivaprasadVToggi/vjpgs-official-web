@@ -156,8 +156,8 @@ export function PGCard({
                     scrollToImage(idx)
                   }}
                   className={`h-1.5 w-1.5 rounded-full transition-all ${idx === currentImageIndex
-                      ? "bg-white w-3"
-                      : "bg-white/60 hover:bg-white/80"
+                    ? "bg-white w-3"
+                    : "bg-white/60 hover:bg-white/80"
                     }`}
                   aria-label={`Go to image ${idx + 1}`}
                 />
@@ -209,32 +209,63 @@ export function PGCard({
         </div>
       </CardContent>
 
-      <CardFooter className="flex flex-col gap-3 border-t border-border p-4">
-        {/* Price Comparison */}
-        <div className="flex w-full items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-sm text-red-500 line-through">
-              Owner Price: ₹{ownerPrice.toLocaleString()}
-            </span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-green-600">₹{vjPrice.toLocaleString()}</span>
-              <span className="text-sm font-medium text-green-600">/month</span>
-            </div>
-            <span className="text-xs font-medium text-green-600">VJ Price</span>
+      import {BookingModal} from "@/components/booking-modal"
+
+      // ... (props interface remains same)
+
+      export function PGCard({
+        name,
+        location,
+        proximityText,
+        ownerPrice,
+        vjPrice,
+        images,
+        amenities,
+        gender,
+        availability,
+        specialBadge,
+}: PGCardProps) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+      const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+
+      // ... (amenityIcons, whatsappMessage - can be removed if unused, nextImage, prevImage, scroll/ref logic remains)
+
+      // ... (inside return)
+
+      {/* Price Comparison */}
+      <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col">
+          <span className="text-sm text-red-500 line-through">
+            Owner Price: ₹{ownerPrice.toLocaleString()}
+          </span>
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-bold text-green-600">₹{vjPrice.toLocaleString()}</span>
+            <span className="text-sm font-medium text-green-600">/month</span>
           </div>
-          {availability ? (
-            <Button asChild className="shrink-0">
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-                Book Now
-              </a>
-            </Button>
-          ) : (
-            <Button disabled className="shrink-0">
-              Waitlist
-            </Button>
-          )}
+          <span className="text-xs font-medium text-green-600">VJ Price</span>
         </div>
-      </CardFooter>
-    </Card>
+        {availability ? (
+          <>
+            <Button
+              onClick={() => setIsBookingModalOpen(true)}
+              className="shrink-0 bg-primary hover:bg-primary/90"
+            >
+              Confirm Discount
+            </Button>
+            <BookingModal
+              isOpen={isBookingModalOpen}
+              onClose={() => setIsBookingModalOpen(false)}
+              pgName={name}
+              pgPrice={vjPrice}
+            />
+          </>
+        ) : (
+          <Button disabled className="shrink-0">
+            Waitlist
+          </Button>
+        )}
+      </div>
+    </CardFooter>
+    </Card >
   )
 }

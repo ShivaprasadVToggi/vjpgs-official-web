@@ -62,8 +62,8 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
 
           {/* Search Bar */}
           <div className="relative mx-auto mt-10 max-w-xl">
-            <div className="relative flex items-center rounded-xl border border-border bg-white shadow-lg">
-              <div className="flex items-center pl-4">
+            <div className="relative flex flex-col sm:flex-row items-center rounded-xl border border-border bg-white shadow-lg overflow-hidden sm:overflow-visible p-1 sm:p-0">
+              <div className="flex w-full sm:w-auto items-center pl-4 pt-3 sm:pt-0">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
               </div>
               <input
@@ -76,11 +76,11 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
                   const detected = determineCollege(val)
                   if (detected) setActiveCollege(detected)
                 }}
-                className="flex-1 bg-transparent px-3 py-5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
+                className="flex-1 w-full bg-transparent px-3 py-3 sm:py-5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
               />
               <Button
                 size="lg"
-                className="m-2 rounded-lg bg-blue-600 hover:bg-blue-700"
+                className="w-full sm:w-auto m-1 sm:m-2 rounded-lg bg-blue-600 hover:bg-blue-700"
                 type="button"
                 onClick={() => document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" })}
               >

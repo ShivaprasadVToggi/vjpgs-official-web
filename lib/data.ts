@@ -61,7 +61,14 @@ export const pgs: PG[] = [
     category: "Girls",
     distances: { cambridge: 4.5, gardencity: 3.8 },
     image: "https://i.postimg.cc/tRFdLq08/ven.jpg",
-    carousel: ["https://i.postimg.cc/tRFdLq08/ven.jpg"],
+    carousel: [
+      "https://i.postimg.cc/tRFdLq08/ven.jpg",
+      "https://i.postimg.cc/7hCSt4yF/ven-1.jpg",
+      "https://i.postimg.cc/XqZ91W0h/ven-2.jpg",
+      "https://i.postimg.cc/Rh3wpmzY/ven-3.jpg",
+      "https://i.postimg.cc/SRXc14pv/ven-4.jpg",
+      "https://i.postimg.cc/XqZ91W0m/ven-5.jpg"
+    ],
     price: 9000,
     ownerPrice: 11000,
     keywords: ["ramamurthy nagar", "t.c. palya", "garden city"]
