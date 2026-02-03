@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select"
 import { RotateCcw } from "lucide-react"
 import { pgs } from "@/lib/data"
+import { normalize } from "@/lib/utils"
 import { PRICE_THRESHOLDS, DISTANCE_VALUES } from "@/lib/filters"
 import type { GenderFilter, PriceFilter, DistanceFilter } from "@/lib/filters"
 
@@ -38,17 +39,32 @@ export function FeaturedPGs({
   onResetFilters,
   activeCollege,
 }: FeaturedPGsProps) {
-  const filteredPGs = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase()
 
-    return pgs.filter((pg) => {
-      // Search filter: name, college, or location
-      if (query) {
-        const matchesSearch =
-          pg.name.toLowerCase().includes(query) ||
-          (activeCollege === "cambridge" && pg.distances.cambridge < Infinity && "cambridge".includes(query)) ||
-          (activeCollege === "gardencity" && pg.distances.gardencity < Infinity && "garden city".includes(query))
-        if (!matchesSearch) return false
+  const filteredPGs = useMemo(() => {
+    const rawQuery = searchQuery.trim()
+    const query = normalize(rawQuery)
+
+    // Keyword definitions
+    const CAMBRIDGE_KEYWORDS = ["cambridge", "cit", "krpuram", "basavanapura", "ramamurthynagar", "nearcambridge"]
+    const GARDEN_CITY_KEYWORDS = ["garden", "gcu", "tcpalya", "battarahalli", "neargardencity", "rmnagar", "tc"]
+
+    // 1. Detect Context from Query
+    let effectiveCollege = activeCollege
+    const isCambridgeSearch = CAMBRIDGE_KEYWORDS.some(k => query.includes(k))
+    const isGardenSearch = GARDEN_CITY_KEYWORDS.some(k => query.includes(k))
+
+    if (isCambridgeSearch) effectiveCollege = "cambridge"
+    if (isGardenSearch) effectiveCollege = "gardencity"
+
+    // 2. Filter Logic
+    // If it's a location/college keyword search -> SHOW ALL (do not filter by name)
+    const isLocationQuery = isCambridgeSearch || isGardenSearch
+
+    const filtered = pgs.filter((pg) => {
+      // Name Search
+      if (rawQuery && !isLocationQuery) {
+        // Strict name search only if NOT a location query
+        if (!normalize(pg.name).includes(query) && !normalize(pg.category).includes(query)) return false
       }
 
       // Gender filter
@@ -57,15 +73,23 @@ export function FeaturedPGs({
       // Price filter
       if (price !== "Any" && pg.price >= PRICE_THRESHOLDS[price]) return false
 
-      // Distance filter (cumulative max-distance: <3km shows <1km AND <3km)
+      // Distance filter - Uses EFFECTIVE college
       if (distance !== "Any") {
         const maxDistanceKm = DISTANCE_VALUES[distance]
-        const pgDistanceKm = pg.distances[activeCollege]
+        const pgDistanceKm = pg.distances[effectiveCollege]
         if (pgDistanceKm > maxDistanceKm) return false
       }
 
       return true
     })
+
+    // 3. Sorting: Price High to Low (Descending) ALWAYS
+    return filtered.sort((a, b) => b.price - a.price).map(pg => ({
+      ...pg,
+      // Inject the effective distance for display relative to the searched context
+      displayDistance: pg.distances[effectiveCollege],
+      displayCollege: effectiveCollege
+    }))
   }, [searchQuery, gender, price, distance, activeCollege])
 
   return (
@@ -137,8 +161,8 @@ export function FeaturedPGs({
               <PGCard
                 key={pg.id}
                 name={pg.name}
-                location={`${pg.category} | ${activeCollege === "cambridge" ? "Cambridge" : "Garden City"}`}
-                proximityText={`📍 ${pg.distances[activeCollege]} km from ${activeCollege === "cambridge" ? "Cambridge" : "Garden City"}`}
+                location={`${pg.category} | ${pg.displayCollege === "cambridge" ? "Cambridge" : "Garden City"}`}
+                proximityText={`📍 ${pg.displayDistance} km from ${pg.displayCollege === "cambridge" ? "Cambridge" : "Garden City"}`}
                 ownerPrice={pg.ownerPrice}
                 vjPrice={pg.price}
                 images={pg.carousel}

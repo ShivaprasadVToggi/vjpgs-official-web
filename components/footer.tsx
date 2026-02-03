@@ -33,7 +33,7 @@ export function Footer() {
             <h3 className="mb-6 text-center text-lg font-semibold text-foreground">
               Connect with Us
             </h3>
-            
+
             <div className="grid grid-cols-1 gap-6 text-center sm:grid-cols-3">
               {/* WhatsApp Column */}
               <div className="flex flex-col items-center gap-3">

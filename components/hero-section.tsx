@@ -3,6 +3,8 @@
 import { Search, MapPin, Percent, Camera, BadgeCheck, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+import { normalize } from "@/lib/utils"
+
 const popularLocations = [
   "K.R. Puram",
   "Near Cambridge",
@@ -10,6 +12,16 @@ const popularLocations = [
   "Ramamurthy Nagar",
   "Garden City",
 ]
+
+const CAMBRIDGE_KEYWORDS = ["cambridge", "cit", "krpuram", "basavanapura", "ramamurthynagar"]
+const GARDEN_CITY_KEYWORDS = ["garden", "gcu", "tcpalya", "battarahalli"]
+
+const determineCollege = (text: string): "cambridge" | "gardencity" | null => {
+  const normalizedText = normalize(text)
+  if (CAMBRIDGE_KEYWORDS.some(k => normalizedText.includes(k))) return "cambridge"
+  if (GARDEN_CITY_KEYWORDS.some(k => normalizedText.includes(k))) return "gardencity"
+  return null
+}
 
 interface HeroSectionProps {
   searchQuery: string
@@ -59,12 +71,10 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
                 placeholder="Search by college, location..."
                 value={searchQuery}
                 onChange={(e) => {
-                  setSearchQuery(e.target.value)
-                  if (e.target.value.toLowerCase().includes("garden")) {
-                    setActiveCollege("gardencity")
-                  } else if (e.target.value.toLowerCase().includes("cambridge")) {
-                    setActiveCollege("cambridge")
-                  }
+                  const val = e.target.value
+                  setSearchQuery(val)
+                  const detected = determineCollege(val)
+                  if (detected) setActiveCollege(detected)
                 }}
                 className="flex-1 bg-transparent px-3 py-5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
               />
@@ -89,17 +99,11 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
                 type="button"
                 onClick={() => {
                   setSearchQuery(location)
-                  if (location.toLowerCase().includes("garden")) { // Update activeCollege on popular tag click
-                    setActiveCollege("gardencity")
-                  } else if (location.toLowerCase().includes("cambridge")) {
-                    setActiveCollege("cambridge")
-                  } else if (location.toLowerCase().includes("k.r. puram")) {
-                    setActiveCollege("cambridge") // Defaulting based on assumed proximity
-                  } else if (location.toLowerCase().includes("tc palya")) {
-                    setActiveCollege("gardencity") // Defaulting based on assumed proximity
-                  } else if (location.toLowerCase().includes("ramamurthy nagar")) {
-                    setActiveCollege("cambridge") // Defaulting based on assumed proximity
-                  }
+                  const detected = determineCollege(location)
+                  if (detected) setActiveCollege(detected)
+                  // Special cases if keywords didn't catch it or for "Near X" specific logic
+                  if (location === "Near Cambridge") setActiveCollege("cambridge")
+
                   document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" })
                 }}
                 className="rounded-full bg-secondary px-3 py-1.5 text-sm font-medium text-secondary-foreground transition-colors hover:bg-accent"

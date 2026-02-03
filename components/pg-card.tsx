@@ -45,16 +45,43 @@ export function PGCard({
   )
   const whatsappLink = `https://wa.me/919743055967?text=${whatsappMessage}`
 
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null)
+
+  const scrollToImage = (index: number) => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current
+      const width = container.offsetWidth
+      container.scrollTo({
+        left: width * index,
+        behavior: "smooth",
+      })
+    }
+  }
+
   const nextImage = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setCurrentImageIndex((prev) => (prev + 1) % images.length)
+    const newIndex = (currentImageIndex + 1) % images.length
+    setCurrentImageIndex(newIndex)
+    scrollToImage(newIndex)
   }
 
   const prevImage = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length)
+    const newIndex = (currentImageIndex - 1 + images.length) % images.length
+    setCurrentImageIndex(newIndex)
+    scrollToImage(newIndex)
+  }
+
+  const handleScroll = () => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current
+      const index = Math.round(container.scrollLeft / container.offsetWidth)
+      if (index !== currentImageIndex) {
+        setCurrentImageIndex(index)
+      }
+    }
   }
 
   // Filter out AC from amenities display
@@ -71,7 +98,11 @@ export function PGCard({
       </div>
 
       <div className="relative aspect-[4/3] overflow-hidden">
-        <div className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+        >
           {images.length > 0 ? (
             images.map((img, index) => (
               <div key={index} className="relative h-full w-full flex-shrink-0 snap-center">
@@ -94,27 +125,27 @@ export function PGCard({
             </div>
           )}
         </div>
-        
+
         {/* Image Navigation Arrows - only show if multiple images */}
         {images.length > 1 && (
           <>
             <button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-card/80 p-1.5 text-foreground opacity-0 transition-opacity hover:bg-card group-hover:opacity-100"
+              className="absolute left-2 top-1/2 z-30 -translate-y-1/2 rounded-full bg-card/80 p-1.5 text-foreground opacity-0 transition-opacity hover:bg-card group-hover:opacity-100"
               aria-label="Previous image"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-card/80 p-1.5 text-foreground opacity-0 transition-opacity hover:bg-card group-hover:opacity-100"
+              className="absolute right-2 top-1/2 z-30 -translate-y-1/2 rounded-full bg-card/80 p-1.5 text-foreground opacity-0 transition-opacity hover:bg-card group-hover:opacity-100"
               aria-label="Next image"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
-            
+
             {/* Image Dots Indicator */}
-            <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
+            <div className="absolute bottom-2 left-1/2 z-30 flex -translate-x-1/2 gap-1.5">
               {images.map((_, idx) => (
                 <button
                   key={idx}
@@ -122,12 +153,12 @@ export function PGCard({
                     e.preventDefault()
                     e.stopPropagation()
                     setCurrentImageIndex(idx)
+                    scrollToImage(idx)
                   }}
-                  className={`h-1.5 w-1.5 rounded-full transition-all ${
-                    idx === currentImageIndex
+                  className={`h-1.5 w-1.5 rounded-full transition-all ${idx === currentImageIndex
                       ? "bg-white w-3"
                       : "bg-white/60 hover:bg-white/80"
-                  }`}
+                    }`}
                   aria-label={`Go to image ${idx + 1}`}
                 />
               ))}
@@ -151,7 +182,7 @@ export function PGCard({
           )}
         </div>
       </div>
-      
+
       <CardContent className="p-4">
         <h3 className="text-lg font-semibold text-foreground line-clamp-1">{name}</h3>
         <div className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
@@ -159,7 +190,7 @@ export function PGCard({
           <span className="line-clamp-1">{location}</span>
         </div>
         <p className="mt-1.5 text-sm font-semibold text-muted-foreground">{proximityText}</p>
-        
+
         <div className="mt-3 flex flex-wrap gap-2">
           {filteredAmenities.slice(0, 3).map((amenity) => (
             <span
