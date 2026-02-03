@@ -15,9 +15,9 @@ export function Header() {
           <Image
             src="https://i.postimg.cc/Jz83sLmJ/logo-removebg-preview.png"
             alt="VJ-PG's Logo"
-            width={80}
-            height={56}
-            className="h-14 w-auto object-contain mix-blend-multiply"
+            width={120}
+            height={80}
+            className="h-20 w-auto object-contain mix-blend-multiply"
           />
         </Link>
 

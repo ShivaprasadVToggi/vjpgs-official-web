@@ -70,6 +70,11 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
                 type="text"
                 placeholder="Search by college, location..."
                 value={searchQuery}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" })
+                  }
+                }}
                 onChange={(e) => {
                   const val = e.target.value
                   setSearchQuery(val)

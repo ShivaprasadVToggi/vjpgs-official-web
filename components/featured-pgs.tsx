@@ -109,7 +109,7 @@ export function FeaturedPGs({
         {/* Filter Toolbar - Amazon-style */}
         <div className="mt-8 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-            <div className="flex flex-1 flex-wrap items-center gap-3">
+            <div className="flex flex-1 flex-row overflow-x-auto whitespace-nowrap gap-3 pb-2 no-scrollbar sm:pb-0 sm:flex-wrap sm:overflow-visible">
               <Select value={gender} onValueChange={(v) => setGender(v as GenderFilter)}>
                 <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
                   <SelectValue placeholder="All Genders" />
@@ -142,16 +142,16 @@ export function FeaturedPGs({
                   <SelectItem value="<5km">{"<5km"}</SelectItem>
                 </SelectContent>
               </Select>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onResetFilters}
+                className="shrink-0 border-gray-300 bg-white hover:bg-gray-50"
+              >
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Reset Filters
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onResetFilters}
-              className="shrink-0 border-gray-300 bg-white hover:bg-gray-50"
-            >
-              <RotateCcw className="mr-2 h-4 w-4" />
-              Reset Filters
-            </Button>
           </div>
         </div>
 
