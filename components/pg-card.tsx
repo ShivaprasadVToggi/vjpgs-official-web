@@ -71,12 +71,29 @@ export function PGCard({
       </div>
 
       <div className="relative aspect-[4/3] overflow-hidden">
-        <Image
-          src={images[currentImageIndex] || "/placeholder.svg"}
-          alt={`${name} - Image ${currentImageIndex + 1}`}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+        <div className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+          {images.length > 0 ? (
+            images.map((img, index) => (
+              <div key={index} className="relative h-full w-full flex-shrink-0 snap-center">
+                <Image
+                  src={img}
+                  alt={`${name} - Image ${index + 1}`}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+            ))
+          ) : (
+            <div className="relative h-full w-full flex-shrink-0 snap-center">
+              <Image
+                src="/placeholder.svg"
+                alt={`${name} - Placeholder`}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            </div>
+          )}
+        </div>
         
         {/* Image Navigation Arrows - only show if multiple images */}
         {images.length > 1 && (
