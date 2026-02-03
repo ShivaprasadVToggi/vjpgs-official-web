@@ -93,7 +93,7 @@ export function FeaturedPGs({
   }, [searchQuery, gender, price, distance, activeCollege])
 
   return (
-    <section id="listings" className="bg-background py-16 sm:py-20 lg:py-24 scroll-mt-32">
+    <section className="bg-background py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
@@ -106,52 +106,54 @@ export function FeaturedPGs({
           </div>
         </div>
 
-        {/* Filter Toolbar - Amazon-style */}
-        <div className="mt-8 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-            <div className="grid grid-cols-2 gap-3 w-full sm:flex sm:flex-1 sm:flex-wrap sm:items-center sm:w-auto">
-              <Select value={gender} onValueChange={(v) => setGender(v as GenderFilter)}>
-                <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
-                  <SelectValue placeholder="All Genders" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">All Genders</SelectItem>
-                  <SelectItem value="Boys">Boys</SelectItem>
-                  <SelectItem value="Girls">Girls</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={price} onValueChange={(v) => setPrice(v as PriceFilter)}>
-                <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
-                  <SelectValue placeholder="Max Price" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Any">Max Price</SelectItem>
-                  <SelectItem value="8k">Under ₹8k</SelectItem>
-                  <SelectItem value="10k">Under ₹10k</SelectItem>
-                  <SelectItem value="12k">Under ₹12k</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={distance} onValueChange={(v) => setDistance(v as DistanceFilter)}>
-                <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
-                  <SelectValue placeholder="Max Distance" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Any">Max Distance</SelectItem>
-                  <SelectItem value="<1km">{"<1km"}</SelectItem>
-                  <SelectItem value="<3km">{"<3km"}</SelectItem>
-                  <SelectItem value="<5km">{"<5km"}</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onResetFilters}
-                className="shrink-0 border-gray-300 bg-white hover:bg-gray-50 h-10 w-full sm:w-auto"
-              >
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Reset Filters
-              </Button>
-            </div>
+        {/* Filter Toolbar - Compact Mobile */}
+        <div id="listings" className="mt-8 scroll-mt-32 rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+          <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center sm:flex sm:flex-row sm:items-center sm:gap-3">
+            <Select value={gender} onValueChange={(v) => setGender(v as GenderFilter)}>
+              <SelectTrigger className="w-full border-gray-300 bg-white px-2 py-2 text-xs sm:w-36 sm:text-sm sm:px-3 sm:py-2">
+                <SelectValue placeholder="Gender" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Genders</SelectItem>
+                <SelectItem value="Boys">Boys</SelectItem>
+                <SelectItem value="Girls">Girls</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={price} onValueChange={(v) => setPrice(v as PriceFilter)}>
+              <SelectTrigger className="w-full border-gray-300 bg-white px-2 py-2 text-xs sm:w-36 sm:text-sm sm:px-3 sm:py-2">
+                <SelectValue placeholder="Price" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Any">Max Price</SelectItem>
+                <SelectItem value="8k">Under ₹8k</SelectItem>
+                <SelectItem value="10k">Under ₹10k</SelectItem>
+                <SelectItem value="12k">Under ₹12k</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={distance} onValueChange={(v) => setDistance(v as DistanceFilter)}>
+              <SelectTrigger className="w-full border-gray-300 bg-white px-2 py-2 text-xs sm:w-36 sm:text-sm sm:px-3 sm:py-2">
+                <SelectValue placeholder="Dist." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Any">Max Distance</SelectItem>
+                <SelectItem value="<1km">{"<1km"}</SelectItem>
+                <SelectItem value="<3km">{"<3km"}</SelectItem>
+                <SelectItem value="<5km">{"<5km"}</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onResetFilters}
+              className="h-9 w-9 shrink-0 border-gray-300 bg-white p-0 hover:bg-gray-50 sm:w-auto sm:px-4 sm:h-10"
+              title="Reset Filters"
+            >
+              <RotateCcw className="h-4 w-4" />
+              <span className="hidden sm:inline sm:ml-2">Reset Filters</span>
+            </Button>
           </div>
         </div>
 

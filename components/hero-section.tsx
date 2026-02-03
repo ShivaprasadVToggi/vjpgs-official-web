@@ -60,10 +60,10 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
             You must book via VJ-PG's to claim the lower price.
           </p>
 
-          {/* Search Bar */}
-          <div className="relative mx-auto mt-10 max-w-xl">
-            <div className="relative flex flex-col sm:flex-row items-center rounded-xl border border-border bg-white shadow-lg overflow-hidden sm:overflow-visible p-1 sm:p-0">
-              <div className="flex w-full sm:w-auto items-center pl-4 pt-3 sm:pt-0">
+          {/* Search Bar - Compact Input Only */}
+          <div className="relative mx-auto mt-8 max-w-md">
+            <div className="relative flex items-center rounded-xl border border-border bg-white shadow-lg overflow-hidden">
+              <div className="absolute left-3 flex items-center pointer-events-none">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
               </div>
               <input
@@ -73,6 +73,8 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" })
+                      // Optional: trigger blur to hide keyboard on mobile
+                      (e.target as HTMLInputElement).blur()
                   }
                 }}
                 onChange={(e) => {
@@ -81,17 +83,8 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
                   const detected = determineCollege(val)
                   if (detected) setActiveCollege(detected)
                 }}
-                className="flex-1 w-full bg-transparent px-3 py-3 sm:py-5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
+                className="w-full bg-transparent pl-10 pr-4 py-3.5 text-base text-foreground placeholder:text-muted-foreground focus:outline-none"
               />
-              <Button
-                size="lg"
-                className="w-full sm:w-auto m-1 sm:m-2 rounded-lg bg-blue-600 hover:bg-blue-700"
-                type="button"
-                onClick={() => document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" })}
-              >
-                <Search className="mr-2 h-4 w-4" />
-                Search
-              </Button>
             </div>
           </div>
 
