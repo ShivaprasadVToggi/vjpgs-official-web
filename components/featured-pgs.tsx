@@ -93,7 +93,7 @@ export function FeaturedPGs({
   }, [searchQuery, gender, price, distance, activeCollege])
 
   return (
-    <section id="listings" className="bg-background py-16 sm:py-20 lg:py-24 scroll-mt-16">
+    <section id="listings" className="bg-background py-16 sm:py-20 lg:py-24 scroll-mt-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
@@ -109,7 +109,7 @@ export function FeaturedPGs({
         {/* Filter Toolbar - Amazon-style */}
         <div className="mt-8 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-            <div className="flex flex-1 flex-row overflow-x-auto whitespace-nowrap gap-3 pb-2 no-scrollbar sm:pb-0 sm:flex-wrap sm:overflow-visible">
+            <div className="grid grid-cols-2 gap-3 w-full sm:flex sm:flex-1 sm:flex-wrap sm:items-center sm:w-auto">
               <Select value={gender} onValueChange={(v) => setGender(v as GenderFilter)}>
                 <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
                   <SelectValue placeholder="All Genders" />
@@ -146,7 +146,7 @@ export function FeaturedPGs({
                 variant="outline"
                 size="sm"
                 onClick={onResetFilters}
-                className="shrink-0 border-gray-300 bg-white hover:bg-gray-50"
+                className="shrink-0 border-gray-300 bg-white hover:bg-gray-50 h-10 w-full sm:w-auto"
               >
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Reset Filters
