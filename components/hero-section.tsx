@@ -72,9 +72,9 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
                 value={searchQuery}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" })
-                      // Optional: trigger blur to hide keyboard on mobile
-                      (e.target as HTMLInputElement).blur()
+                    document.getElementById("listings")?.scrollIntoView({ behavior: "smooth" });
+                    // Optional: trigger blur to hide keyboard on mobile
+                    (e.target as HTMLInputElement).blur()
                   }
                 }}
                 onChange={(e) => {
