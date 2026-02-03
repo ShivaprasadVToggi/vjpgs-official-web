@@ -66,7 +66,7 @@ export function FeaturedPGs({
 
       return true
     })
-  }, [searchQuery, gender, price, distance])
+  }, [searchQuery, gender, price, distance, activeCollege])
 
   return (
     <section id="listings" className="bg-background py-16 sm:py-20 lg:py-24 scroll-mt-16">
@@ -88,10 +88,10 @@ export function FeaturedPGs({
             <div className="flex flex-1 flex-wrap items-center gap-3">
               <Select value={gender} onValueChange={(v) => setGender(v as GenderFilter)}>
                 <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
-                  <SelectValue placeholder="Gender" />
+                  <SelectValue placeholder="All Genders" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="All">All</SelectItem>
+                  <SelectItem value="All">All Genders</SelectItem>
                   <SelectItem value="Boys">Boys</SelectItem>
                   <SelectItem value="Girls">Girls</SelectItem>
                 </SelectContent>
@@ -101,7 +101,7 @@ export function FeaturedPGs({
                   <SelectValue placeholder="Max Price" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Any">Any</SelectItem>
+                  <SelectItem value="Any">Max Price</SelectItem>
                   <SelectItem value="8k">Under ₹8k</SelectItem>
                   <SelectItem value="10k">Under ₹10k</SelectItem>
                   <SelectItem value="12k">Under ₹12k</SelectItem>
@@ -109,10 +109,10 @@ export function FeaturedPGs({
               </Select>
               <Select value={distance} onValueChange={(v) => setDistance(v as DistanceFilter)}>
                 <SelectTrigger className="w-full border-gray-300 bg-white sm:w-36">
-                  <SelectValue placeholder="Distance" />
+                  <SelectValue placeholder="Max Distance" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Any">Any</SelectItem>
+                  <SelectItem value="Any">Max Distance</SelectItem>
                   <SelectItem value="<1km">{"<1km"}</SelectItem>
                   <SelectItem value="<3km">{"<3km"}</SelectItem>
                   <SelectItem value="<5km">{"<5km"}</SelectItem>

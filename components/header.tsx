@@ -10,14 +10,14 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center justify-center">
+      <div className="mx-auto flex h-auto max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center justify-center bg-transparent">
           <Image
-            src="https://i.postimg.cc/RCpPyW1J/a-minimal-flat-logo-design-featuring-a-s-BL6m-W69RSzq4-QIcfnqli-A-5Ts1s64e-SAOMba-Sh-FZmc-BA.jpg"
+            src="https://i.postimg.cc/Jz83sLmJ/logo-removebg-preview.png"
             alt="VJ-PG's Logo"
-            width={48}
-            height={48}
-            className="rounded-full object-cover"
+            width={80}
+            height={56}
+            className="h-14 w-auto object-contain mix-blend-multiply"
           />
         </Link>
 
@@ -32,7 +32,7 @@ export function Header() {
           <Link href="#owners" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             For Owners
           </Link>
-          <Link href="#" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+          <Link href="#contact" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
             Contact
           </Link>
         </nav>
@@ -61,7 +61,7 @@ export function Header() {
             <Link href="#owners" className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-foreground" onClick={() => setMobileMenuOpen(false)}>
               For Owners
             </Link>
-            <Link href="#" className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-foreground">
+            <Link href="#contact" className="block rounded-md px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-foreground" onClick={() => setMobileMenuOpen(false)}>
               Contact
             </Link>
           </div>

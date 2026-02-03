@@ -7,17 +7,17 @@ export function Footer() {
   const listPropertyLink = "https://wa.me/919743055967?text=Hi%20VJ-PGs%2C%20I%20want%20to%20list%20my%20property."
 
   return (
-    <footer id="owners" className="border-t border-border bg-card scroll-mt-16">
+    <footer id="contact" className="border-t border-border bg-card scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center gap-8">
           {/* Brand */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center bg-transparent">
             <Image
-              src="https://i.postimg.cc/RCpPyW1J/a-minimal-flat-logo-design-featuring-a-s-BL6m-W69RSzq4-QIcfnqli-A-5Ts1s64e-SAOMba-Sh-FZmc-BA.jpg"
+              src="https://i.postimg.cc/Jz83sLmJ/logo-removebg-preview.png"
               alt="VJ-PG's Logo"
-              width={48}
-              height={48}
-              className="rounded-full object-cover"
+              width={80}
+              height={80}
+              className="h-20 w-auto object-contain"
             />
           </Link>
 
