@@ -44,7 +44,7 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
         <DialogHeader>
           <DialogTitle>Confirm Discount</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-6 py-4">
           <div className="grid gap-2">
             <Label htmlFor="fullName">Full Name</Label>
             <Input

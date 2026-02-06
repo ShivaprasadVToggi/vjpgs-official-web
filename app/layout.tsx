@@ -8,8 +8,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "VJ-PG's - Student Housing Made Easy",
-  description: 'Book via VJ-PGs and save thousands. Verified PGs near your college with 20% discount on first month.',
+  title: "VJ-PGs | Student Housing & Brokerage",
+  description: 'Verified PGs near Cambridge & Garden City University. Book via VJ-PGs for ₹2,000 Flat Discount.',
   generator: 'v0.app',
   icons: {
     icon: [

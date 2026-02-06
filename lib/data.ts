@@ -8,6 +8,7 @@ export interface PG {
   price: number;
   ownerPrice: number;
   keywords?: string[];
+  amenities: string[];
 }
 
 export const pgs: PG[] = [
@@ -20,7 +21,8 @@ export const pgs: PG[] = [
     carousel: ["https://i.postimg.cc/QtYLDQKv/lax.jpg"],
     price: 7500,
     ownerPrice: 9500,
-    keywords: ["k.r. puram", "kr puram", "cambridge", "near college"]
+    keywords: ["k.r. puram", "kr puram", "cambridge", "near college"],
+    amenities: ["WiFi", "3 Meals", "Laundry", "Hot Water", "CCTV"]
   },
   {
     id: 2,
@@ -31,7 +33,8 @@ export const pgs: PG[] = [
     carousel: ["https://i.postimg.cc/NjdZm8pD/bala-g.jpg", "https://i.postimg.cc/nrTN2vpP/bala-g-1.jpg"],
     price: 8000,
     ownerPrice: 10000,
-    keywords: ["basavanapura", "cambridge", "cit"]
+    keywords: ["basavanapura", "cambridge", "cit"],
+    amenities: ["WiFi", "3 Meals", "Washing Machine", "Security", "Geyser"]
   },
   {
     id: 3,
@@ -42,7 +45,8 @@ export const pgs: PG[] = [
     carousel: ["https://i.postimg.cc/y8prk18F/bala-gen.jpg"],
     price: 7000,
     ownerPrice: 9000,
-    keywords: ["garden city", "gcu", "battarahalli", "tc palya"]
+    keywords: ["garden city", "gcu", "battarahalli", "tc palya"],
+    amenities: ["WiFi", "3 Meals", "Laundry", "Power Backup", "24/7 Water"]
   },
   {
     id: 4,
@@ -53,7 +57,8 @@ export const pgs: PG[] = [
     carousel: ["https://i.postimg.cc/kXnjs6Vt/royal.jpg", "https://i.postimg.cc/QdDW11HV/royal-1.jpg"],
     price: 11500,
     ownerPrice: 13500,
-    keywords: ["ramamurthy nagar", "rm nagar", "tc palya"]
+    keywords: ["ramamurthy nagar", "rm nagar", "tc palya"],
+    amenities: ["WiFi", "TV", "Fridge", "3 Meals", "Laundry", "Lift", "Power Backup"]
   },
   {
     id: 5,
@@ -71,6 +76,7 @@ export const pgs: PG[] = [
     ],
     price: 9000,
     ownerPrice: 11000,
-    keywords: ["ramamurthy nagar", "t.c. palya", "garden city"]
+    keywords: ["ramamurthy nagar", "t.c. palya", "garden city"],
+    amenities: ["WiFi", "3 Meals", "Washing Machine", "Biometric Entry", "Lift"]
   }
 ]

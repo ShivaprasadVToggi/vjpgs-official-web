@@ -57,7 +57,7 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
           <p className="mt-6 text-base leading-relaxed text-muted-foreground sm:text-lg">
             IMPORTANT: These discounts are{" "}
             <span className="font-bold text-red-600">NOT available</span> if you walk in directly.
-            You must book via VJ-PG's to claim the lower price.
+            You must book via VJ-PGs to claim the lower price.
           </p>
 
           {/* Search Bar - Compact Input Only */}

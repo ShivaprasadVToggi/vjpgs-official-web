@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Image from "next/image"
-import { MapPin, Wifi, UtensilsCrossed, Users, Tag, Award, ChevronLeft, ChevronRight } from "lucide-react"
+import { MapPin, Wifi, UtensilsCrossed, Users, Tag, Award, ChevronLeft, ChevronRight, Shirt, Zap, Video, Monitor, Droplets, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -22,8 +22,17 @@ interface PGCardProps {
 }
 
 const amenityIcons: Record<string, React.ReactNode> = {
-  WiFi: <Wifi className="h-3.5 w-3.5" />,
-  Meals: <UtensilsCrossed className="h-3.5 w-3.5" />,
+  "WiFi": <Wifi className="h-3.5 w-3.5" />,
+  "Meals": <UtensilsCrossed className="h-3.5 w-3.5" />,
+  "3 Meals": <UtensilsCrossed className="h-3.5 w-3.5" />,
+  "Laundry": <Shirt className="h-3.5 w-3.5" />,
+  "Washing Machine": <Shirt className="h-3.5 w-3.5" />,
+  "Power Backup": <Zap className="h-3.5 w-3.5" />,
+  "CCTV": <Video className="h-3.5 w-3.5" />,
+  "Security": <Lock className="h-3.5 w-3.5" />,
+  "TV": <Monitor className="h-3.5 w-3.5" />,
+  "Hot Water": <Droplets className="h-3.5 w-3.5" />,
+  "Geyser": <Droplets className="h-3.5 w-3.5" />,
 }
 
 export function PGCard({
@@ -88,6 +97,16 @@ export function PGCard({
 
   // Filter out AC from amenities display
   const filteredAmenities = amenities.filter((a) => a !== "AC")
+
+  // Helper to find icon
+  const getIcon = (amenity: string) => {
+    for (const key in amenityIcons) {
+      if (amenity.includes(key) || key.includes(amenity)) {
+        return amenityIcons[key]
+      }
+    }
+    return <Tag className="h-3.5 w-3.5" />
+  }
 
   return (
     <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
@@ -199,7 +218,7 @@ export function PGCard({
               key={amenity}
               className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground"
             >
-              {amenityIcons[amenity] || null}
+              {getIcon(amenity)}
               {amenity}
             </span>
           ))}

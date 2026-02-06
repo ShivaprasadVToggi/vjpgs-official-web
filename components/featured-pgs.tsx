@@ -168,7 +168,7 @@ export function FeaturedPGs({
                 ownerPrice={pg.ownerPrice}
                 vjPrice={pg.price}
                 images={pg.carousel}
-                amenities={[]}
+                amenities={pg.amenities || []}
                 gender={pg.category.toLowerCase() as "boys" | "girls"}
                 availability={true}
                 specialBadge="VJ Price Guarantee"
