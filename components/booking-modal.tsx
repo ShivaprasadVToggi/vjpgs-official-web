@@ -17,6 +17,7 @@ interface BookingModalProps {
 export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [tokenId, setTokenId] = useState<string>("")
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",
@@ -24,42 +25,11 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
     sharingType: ""
   })
 
-  const handleSubmit = async () => {
-    setIsLoading(true)
-
-    try {
-      // Prepare form data for FormSubmit
-      const submissionData = {
-        _subject: "New PG Booking Lead from VJ-PGs Web!",
-        _captcha: "false",
-        "PG Name": pgName,
-        "PG Price": `₹${pgPrice}`,
-        "Full Name": formData.fullName,
-        "Phone Number": formData.phoneNumber,
-        "College Name": formData.collegeName,
-        "Sharing Type": formData.sharingType,
-      }
-
-      // Send to FormSubmit
-      await fetch("https://formsubmit.co/ajax/shivaprasadtoggi45@gmail.com", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(submissionData)
-      })
-
-      setIsSuccess(true)
-    } catch (error) {
-      console.error("Submission failed", error)
-      alert("Something went wrong. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
+  const generateTokenId = () => {
+    return "VJ-" + Math.floor(1000 + Math.random() * 9000);
   }
 
-  const generatePDF = () => {
+  const generatePDF = (id: string) => {
     const doc = new jsPDF()
 
     // -- Set Styles --
@@ -89,6 +59,17 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
       yPos += 12
     }
 
+    // Draw Big Token ID
+    doc.setFontSize(20)
+    doc.setFont("helvetica", "bold")
+    doc.setTextColor(primaryColor)
+    doc.text(`Token ID: ${id}`, 105, yPos + 10, { align: "center" })
+    yPos += 30
+
+    doc.setFontSize(14)
+    doc.setTextColor(0, 0, 0)
+    doc.setFont("helvetica", "normal")
+
     addLine("Student Name:", formData.fullName)
     addLine("Phone Number:", formData.phoneNumber)
     addLine("College:", formData.collegeName)
@@ -112,11 +93,72 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
     doc.setFontSize(10)
     doc.setTextColor(100, 100, 100)
     doc.setFont("helvetica", "italic")
-    doc.text("* Present this digital token at the property to claim the discount.", 105, 110, { align: "center" })
-    doc.text("* Valid for 7 days from issue date.", 105, 115, { align: "center" })
+    doc.text("* Present this digital token at the property to claim the discount.", 105, 250, { align: "center" })
+    doc.text("* Valid for 7 days from issue date.", 105, 255, { align: "center" })
 
     // Save
-    doc.save(`VJ-Token-${formData.fullName.replace(/\s+/g, '_')}.pdf`)
+    doc.save(`VJ-Token-${id}.pdf`)
+  }
+
+  const handleOpenWhatsApp = (id: string) => {
+    const message = `Hi VJ! I have generated my Discount Token: *${id}*.
+
+Name: ${formData.fullName}
+PG: ${pgName}
+College: ${formData.collegeName}
+Sharing: ${formData.sharingType}
+
+I am attaching the PDF proof now.`
+
+    window.open("https://wa.me/919743055967?text=" + encodeURIComponent(message), "_blank")
+  }
+
+  const handleSubmit = async () => {
+    setIsLoading(true)
+
+    try {
+      // Step A: Generate ID
+      const newId = generateTokenId()
+      setTokenId(newId)
+
+      // Prepare form data for FormSubmit
+      const submissionData = {
+        _subject: `New Booking Token: ${newId}`,
+        _captcha: "false",
+        "Token ID": newId,
+        "PG Name": pgName,
+        "PG Price": `₹${pgPrice}`,
+        "Full Name": formData.fullName,
+        "Phone Number": formData.phoneNumber,
+        "College Name": formData.collegeName,
+        "Sharing Type": formData.sharingType,
+      }
+
+      // Send to FormSubmit
+      await fetch("https://formsubmit.co/ajax/shivaprasadtoggi45@gmail.com", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(submissionData)
+      })
+
+      // Step B: Generate PDF (Trigger Download)
+      generatePDF(newId)
+
+      // Step D: Execute Sequence - Wait then Redirect
+      setTimeout(() => {
+        handleOpenWhatsApp(newId)
+        setIsSuccess(true)
+        setIsLoading(false)
+      }, 1500)
+
+    } catch (error) {
+      console.error("Submission failed", error)
+      alert("Something went wrong. Please try again.")
+      setIsLoading(false)
+    }
   }
 
   const isFormValid = formData.fullName && formData.phoneNumber && formData.collegeName && formData.sharingType
@@ -128,6 +170,7 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
         // Reset state after a delay to ensure smooth closing transition
         setTimeout(() => {
           setIsSuccess(false)
+          setTokenId("")
           setFormData({ fullName: "", phoneNumber: "", collegeName: "", sharingType: "" })
         }, 300)
       }
@@ -144,30 +187,30 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
             <div className="mb-4 rounded-full bg-green-100 p-3">
               <CheckCircle2 className="h-12 w-12 text-green-600" />
             </div>
-            <h3 className="text-xl font-bold text-foreground">Token Generated!</h3>
+            <h3 className="text-xl font-bold text-foreground">Token #{tokenId} Generated!</h3>
             <p className="mt-2 text-muted-foreground text-sm max-w-[280px]">
-              Your official discount pass is ready. Please download it below and show it at the PG.
+              Please attach the downloaded PDF in the WhatsApp chat that just opened.
             </p>
 
             <Button
               className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
-              onClick={generatePDF}
+              onClick={() => handleOpenWhatsApp(tokenId)}
             >
-              <FileDown className="mr-2 h-4 w-4" />
-              Download Official PDF
+              Open WhatsApp Again
             </Button>
           </div>
         ) : (
           <>
             <div className="grid gap-5 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">Full Name <span className="text-red-500">*</span></Label>
                 <Input
                   id="fullName"
                   placeholder="Enter your full name"
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                   className="rounded-md"
+                  required
                 />
               </div>
               <div className="grid gap-2">
@@ -183,17 +226,18 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="collegeName">College Name</Label>
+                <Label htmlFor="collegeName">College Name <span className="text-red-500">*</span></Label>
                 <Input
                   id="collegeName"
                   placeholder="Enter your college name"
                   value={formData.collegeName}
                   onChange={(e) => setFormData({ ...formData, collegeName: e.target.value })}
                   className="rounded-md"
+                  required
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="sharingType">Sharing Type</Label>
+                <Label htmlFor="sharingType">Sharing Type <span className="text-red-500">*</span></Label>
                 <Select
                   value={formData.sharingType}
                   onValueChange={(value) => setFormData({ ...formData, sharingType: value })}
