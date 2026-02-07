@@ -110,7 +110,7 @@ export function FeaturedPGs({
         <div id="listings" className="mt-8 scroll-mt-32 rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
           <div className="grid grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center w-full sm:flex sm:flex-row sm:items-center sm:gap-3">
             <Select value={gender} onValueChange={(v) => setGender(v as GenderFilter)}>
-              <SelectTrigger className="w-full border-gray-300 bg-white px-1 py-2 text-xs sm:w-36 sm:text-sm sm:px-3 sm:py-2">
+              <SelectTrigger suppressHydrationWarning className="w-full border-gray-300 bg-white px-1 py-2 text-xs sm:w-36 sm:text-sm sm:px-3 sm:py-2">
                 <SelectValue placeholder="Gender" />
               </SelectTrigger>
               <SelectContent>
@@ -121,7 +121,7 @@ export function FeaturedPGs({
             </Select>
 
             <Select value={price} onValueChange={(v) => setPrice(v as PriceFilter)}>
-              <SelectTrigger className="w-full border-gray-300 bg-white px-1 py-2 text-xs sm:w-36 sm:text-sm sm:px-3 sm:py-2">
+              <SelectTrigger suppressHydrationWarning className="w-full border-gray-300 bg-white px-1 py-2 text-xs sm:w-36 sm:text-sm sm:px-3 sm:py-2">
                 <SelectValue placeholder="Price" />
               </SelectTrigger>
               <SelectContent>
@@ -133,7 +133,7 @@ export function FeaturedPGs({
             </Select>
 
             <Select value={distance} onValueChange={(v) => setDistance(v as DistanceFilter)}>
-              <SelectTrigger className="w-full border-gray-300 bg-white px-1 py-2 text-xs sm:w-36 sm:text-sm sm:px-3 sm:py-2">
+              <SelectTrigger suppressHydrationWarning className="w-full border-gray-300 bg-white px-1 py-2 text-xs sm:w-36 sm:text-sm sm:px-3 sm:py-2">
                 <SelectValue placeholder="Dist." />
               </SelectTrigger>
               <SelectContent>
@@ -145,6 +145,7 @@ export function FeaturedPGs({
             </Select>
 
             <Button
+              suppressHydrationWarning
               variant="outline"
               size="icon"
               onClick={onResetFilters}

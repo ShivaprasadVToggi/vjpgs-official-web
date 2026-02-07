@@ -154,6 +154,7 @@ export function PGCard({
               onClick={prevImage}
               className="absolute left-2 top-1/2 z-30 -translate-y-1/2 rounded-full bg-card/80 p-1.5 text-foreground opacity-0 transition-opacity hover:bg-card group-hover:opacity-100"
               aria-label="Previous image"
+              suppressHydrationWarning
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -161,6 +162,7 @@ export function PGCard({
               onClick={nextImage}
               className="absolute right-2 top-1/2 z-30 -translate-y-1/2 rounded-full bg-card/80 p-1.5 text-foreground opacity-0 transition-opacity hover:bg-card group-hover:opacity-100"
               aria-label="Next image"
+              suppressHydrationWarning
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -181,6 +183,7 @@ export function PGCard({
                     : "bg-white/60 hover:bg-white/80"
                     }`}
                   aria-label={`Go to image ${idx + 1}`}
+                  suppressHydrationWarning
                 />
               ))}
             </div>
@@ -248,6 +251,7 @@ export function PGCard({
               <Button
                 onClick={() => setIsBookingModalOpen(true)}
                 className="shrink-0 bg-primary hover:bg-primary/90"
+                suppressHydrationWarning
               >
                 Confirm Discount
               </Button>

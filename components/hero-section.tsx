@@ -67,6 +67,7 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
                 <MapPin className="h-5 w-5 text-muted-foreground" />
               </div>
               <input
+                suppressHydrationWarning
                 type="text"
                 placeholder="Search by college, location..."
                 value={searchQuery}
@@ -93,6 +94,7 @@ export function HeroSection({ searchQuery, setSearchQuery, activeCollege, setAct
             <span className="text-sm text-muted-foreground">Popular:</span>
             {popularLocations.map((location) => (
               <button
+                suppressHydrationWarning
                 key={location}
                 type="button"
                 onClick={() => {
