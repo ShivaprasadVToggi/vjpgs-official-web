@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Loader2, CheckCircle2, FileDown } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface BookingModalProps {
   isOpen: boolean
@@ -24,6 +25,7 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
     collegeName: "",
     sharingType: ""
   })
+  const [isWhatsAppChecked, setIsWhatsAppChecked] = useState(false)
 
   const generateTokenId = () => {
     return "VJ-" + Math.floor(1000 + Math.random() * 9000);
@@ -132,6 +134,7 @@ I am attaching the PDF proof now.`
         "Phone Number": formData.phoneNumber,
         "College Name": formData.collegeName,
         "Sharing Type": formData.sharingType,
+        "Is WhatsApp": "true"
       }
 
       // Send to FormSubmit
@@ -144,15 +147,9 @@ I am attaching the PDF proof now.`
         body: JSON.stringify(submissionData)
       })
 
-      // Step B: Generate PDF (Trigger Download)
-      generatePDF(newId)
-
-      // Step D: Execute Sequence - Wait then Redirect
-      setTimeout(() => {
-        handleOpenWhatsApp(newId)
-        setIsSuccess(true)
-        setIsLoading(false)
-      }, 1500)
+      // Step B: Show Success State (No Auto Download/Redirect)
+      setIsSuccess(true)
+      setIsLoading(false)
 
     } catch (error) {
       console.error("Submission failed", error)
@@ -161,7 +158,8 @@ I am attaching the PDF proof now.`
     }
   }
 
-  const isFormValid = formData.fullName && formData.phoneNumber && formData.collegeName && formData.sharingType
+  const phoneRegex = /^[6-9]\d{9}$/
+  const isFormValid = formData.fullName && phoneRegex.test(formData.phoneNumber) && formData.collegeName && formData.sharingType && isWhatsAppChecked
 
   return (
     <Dialog open={isOpen} onOpenChange={(val) => {
@@ -189,14 +187,15 @@ I am attaching the PDF proof now.`
             </div>
             <h3 className="text-xl font-bold text-foreground">Token #{tokenId} Generated!</h3>
             <p className="mt-2 text-muted-foreground text-sm max-w-[280px]">
-              Please attach the downloaded PDF in the WhatsApp chat that just opened.
+              We have received your request. Download your PDF below.
             </p>
 
             <Button
               className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
-              onClick={() => handleOpenWhatsApp(tokenId)}
+              onClick={() => generatePDF(tokenId)}
             >
-              Open WhatsApp Again
+              <FileDown className="mr-2 h-4 w-4" />
+              Download Verified PDF
             </Button>
           </div>
         ) : (
@@ -219,11 +218,32 @@ I am attaching the PDF proof now.`
                   id="phoneNumber"
                   type="tel"
                   placeholder="Enter your mobile number"
+                  pattern="[6-9][0-9]{9}"
+                  maxLength={10}
                   value={formData.phoneNumber}
-                  onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 10)
+                    setFormData({ ...formData, phoneNumber: val })
+                  }}
                   className="rounded-md"
                   required
                 />
+                <p className="text-xs text-red-500">
+                  ⚠️ We will verify this number via WhatsApp. Invalid numbers will lose the discount.
+                </p>
+                <div className="flex items-center space-x-2 pt-1">
+                  <Checkbox
+                    id="whatsapp-check"
+                    checked={isWhatsAppChecked}
+                    onCheckedChange={(checked) => setIsWhatsAppChecked(checked as boolean)}
+                  />
+                  <Label
+                    htmlFor="whatsapp-check"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    This is my active WhatsApp number
+                  </Label>
+                </div>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="collegeName">College Name <span className="text-red-500">*</span></Label>
@@ -266,7 +286,7 @@ I am attaching the PDF proof now.`
                   Generating Token...
                 </>
               ) : (
-                "Generate Discount Token"
+                "Send for Verification & Download"
               )}
             </Button>
           </>
