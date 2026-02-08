@@ -163,16 +163,9 @@ export function FeaturedPGs({
             {filteredPGs.map((pg) => (
               <PGCard
                 key={pg.id}
-                name={pg.name}
-                location={`${pg.category} | ${pg.displayCollege === "cambridge" ? "Cambridge" : "Garden City"}`}
-                proximityText={`📍 ${pg.displayDistance} km from ${pg.displayCollege === "cambridge" ? "Cambridge" : "Garden City"}`}
-                ownerPrice={pg.ownerPrice}
-                vjPrice={pg.price}
-                images={pg.carousel}
-                amenities={pg.amenities || []}
-                gender={pg.category.toLowerCase() as "boys" | "girls"}
-                availability={true}
-                specialBadge="VJ Price Guarantee"
+                pg={pg}
+                displayDistance={pg.displayDistance}
+                displayCollege={pg.displayCollege}
               />
             ))}
           </div>

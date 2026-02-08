@@ -31,88 +31,123 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
     return "VJ-" + Math.floor(1000 + Math.random() * 9000);
   }
 
-  const generatePDF = (id: string) => {
+  const generatePDF = async (id: string) => {
     const doc = new jsPDF()
 
-    // -- Set Styles --
-    const primaryColor = "#16a34a" // green-600
-
-    // Header
-    doc.setFontSize(22)
-    doc.setTextColor(primaryColor)
-    doc.setFont("helvetica", "bold")
-    doc.text("OFFICIAL VJ-PGs BOOKING PASS", 105, 20, { align: "center" })
-
-    doc.setLineWidth(0.5)
-    doc.setDrawColor(200, 200, 200)
-    doc.line(20, 25, 190, 25)
-
-    // Token Details
-    doc.setFontSize(14)
-    doc.setTextColor(0, 0, 0)
-    doc.setFont("helvetica", "normal")
-
-    let yPos = 40
-    const addLine = (label: string, value: string) => {
-      doc.setFont("helvetica", "bold")
-      doc.text(label, 20, yPos)
-      doc.setFont("helvetica", "normal")
-      doc.text(value, 80, yPos)
-      yPos += 12
+    const loadImage = (url: string): Promise<string> => {
+      return new Promise((resolve, reject) => {
+        fetch(url)
+          .then(response => response.blob())
+          .then(blob => {
+            const reader = new FileReader()
+            reader.onloadend = () => resolve(reader.result as string)
+            reader.onerror = reject
+            reader.readAsDataURL(blob)
+          })
+          .catch(reject)
+      })
     }
 
-    // Draw Big Token ID
-    doc.setFontSize(20)
-    doc.setFont("helvetica", "bold")
-    doc.setTextColor(primaryColor)
-    doc.text(`Token ID: ${id}`, 105, yPos + 10, { align: "center" })
-    yPos += 30
+    try {
+      // Load Logo
+      try {
+        const logoData = await loadImage("https://i.postimg.cc/657XPkv7/logo.png")
+        doc.addImage(logoData, "PNG", 85, 10, 40, 40)
+      } catch (e) {
+        console.error("Logo failed to load", e)
+      }
 
-    doc.setFontSize(14)
-    doc.setTextColor(0, 0, 0)
-    doc.setFont("helvetica", "normal")
+      // 1. Professional Blue Border
+      const primaryBlue = "#2563EB"
+      doc.setDrawColor(37, 99, 235) // #2563EB
+      doc.setLineWidth(1)
+      doc.rect(5, 5, 200, 287) // A4 Border
 
-    addLine("Student Name:", formData.fullName)
-    addLine("Phone Number:", formData.phoneNumber)
-    addLine("College:", formData.collegeName)
-    addLine("PG Name:", pgName)
-    addLine("Sharing Type:", formData.sharingType)
-    addLine("Discount Price:", `Rs. ${pgPrice}/month`)
-    addLine("Date Issued:", new Date().toLocaleDateString())
+      // 2. Header
+      doc.setFontSize(22)
+      doc.setTextColor(37, 99, 235)
+      doc.setFont("helvetica", "bold")
+      doc.text("VJ-PG's OFFICIAL DISCOUNT PASS", 105, 60, { align: "center" })
 
-    // Digital Seal
-    doc.setDrawColor(primaryColor)
-    doc.setLineWidth(1.5)
-    doc.circle(150, 60, 20, "S")
+      // 3. Token Details Section
+      doc.setDrawColor(200, 200, 200)
+      doc.setLineWidth(0.5)
+      doc.setFillColor(250, 250, 250)
+      doc.roundedRect(30, 75, 150, 105, 3, 3, "FD") // Filled box
 
-    doc.setFontSize(10)
-    doc.setTextColor(primaryColor)
-    doc.setFont("helvetica", "bold")
-    doc.text("VJ-PGs", 150, 58, { align: "center" })
-    doc.text("VERIFIED", 150, 64, { align: "center" })
+      doc.setFontSize(14)
+      doc.setTextColor(0, 0, 0)
 
-    // Footer Note
-    doc.setFontSize(10)
-    doc.setTextColor(100, 100, 100)
-    doc.setFont("helvetica", "italic")
-    doc.text("* Present this digital token at the property to claim the discount.", 105, 250, { align: "center" })
-    doc.text("* Valid for 7 days from issue date.", 105, 255, { align: "center" })
+      let yPos = 90
+      const leftX = 40
+      const valueX = 90
 
-    // Save
-    doc.save(`VJ-Token-${id}.pdf`)
-  }
+      const addDetail = (label: string, value: string, isBoldValue = false) => {
+        doc.setFont("helvetica", "bold")
+        doc.text(label, leftX, yPos)
+        doc.setFont("helvetica", isBoldValue ? "bold" : "normal")
+        doc.text(value, valueX, yPos)
+        yPos += 14
+      }
 
-  const handleOpenWhatsApp = (id: string) => {
-    const message = `Hi VJ! I have generated my Discount Token: *${id}*.
+      addDetail("Pass ID:", id, true)
+      addDetail("Date of Issue:", new Date().toLocaleDateString())
+      addDetail("Student Name:", formData.fullName)
+      addDetail("College:", formData.collegeName)
+      addDetail("Target PG:", pgName)
+      addDetail("Sharing Type:", formData.sharingType)
+      doc.setTextColor(37, 99, 235) // Blue for discount
+      addDetail("Discount:", "FLAT ₹2,000 OFF", true)
+      doc.setTextColor(0, 0, 0) // Reset
 
-Name: ${formData.fullName}
-PG: ${pgName}
-College: ${formData.collegeName}
-Sharing: ${formData.sharingType}
+      // 4. Digital Seal
+      const sealX = 150
+      const sealY = 220
 
-I am attaching the PDF proof now.`
+      doc.setDrawColor(37, 99, 235)
+      doc.setLineWidth(1)
+      doc.circle(sealX, sealY, 18)
+      doc.circle(sealX, sealY, 15)
 
-    window.open("https://wa.me/919743055967?text=" + encodeURIComponent(message), "_blank")
+      doc.setFontSize(8)
+      doc.setTextColor(37, 99, 235)
+      doc.setFont("helvetica", "bold")
+      doc.text("VJ-PG's VERIFIED", sealX, sealY - 3, { align: "center" })
+      doc.text("DISCOUNT GUARANTEED", sealX, sealY + 4, { align: "center" })
+
+      // Signature
+      doc.setFont("times", "italic")
+      doc.setFontSize(12)
+      doc.text("Authorized by VJ-PGs Founders", sealX, sealY + 30, { align: "center" })
+
+      // 5. Legal Terms
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(9)
+      doc.setTextColor(100, 100, 100)
+
+      let termsY = 260
+      const terms = [
+        "1. This pass guarantees a FLAT ₹2,000 discount on the FIRST MONTH'S RENT only.",
+        "2. Standard rent applies from the second month onwards as per PG owner's policy.",
+        "3. VJ-PG's is a discovery and brokerage platform. We are NOT responsible for any future disputes,",
+        "   safety issues, food quality, or conduct within the PG premises.",
+        "4. The student must present this digital or printed pass to the PG owner during the first visit to claim the benefit.",
+        "5. This token is non-transferable and valid for 7 days from the date of issue."
+      ]
+
+      terms.forEach(line => {
+        doc.text(line, 20, termsY)
+        termsY += 5
+      })
+
+      // Save
+      const safeName = formData.fullName.replace(/\s+/g, '_')
+      doc.save(`VJ_Pass_${safeName}.pdf`)
+
+    } catch (error) {
+      console.error("PDF Generation Error", error)
+      alert("Could not generate PDF. Please try again.")
+    }
   }
 
   const handleSubmit = async () => {
@@ -187,7 +222,7 @@ I am attaching the PDF proof now.`
             </div>
             <h3 className="text-xl font-bold text-foreground">Token #{tokenId} Generated!</h3>
             <p className="mt-2 text-muted-foreground text-sm max-w-[280px]">
-              We have received your request. Download your PDF below.
+              Thank You! We have received your request. Download your PDF below.
             </p>
 
             <Button
