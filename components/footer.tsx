@@ -4,7 +4,7 @@ import { MessageCircle, Instagram, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function Footer() {
-  const listPropertyLink = "https://wa.me/919743055967?text=Hi%20VJ-PGs%2C%20I%20want%20to%20list%20my%20property."
+  const listPropertyLink = "https://wa.me/919741010710?text=Hi%20VJ-PGs%2C%20I%20want%20to%20list%20my%20property."
 
   return (
     <footer id="contact" className="border-t border-border bg-card scroll-mt-16">
@@ -31,7 +31,7 @@ export function Footer() {
           {/* Connect with Founders Section */}
           <div className="w-full max-w-3xl">
             <h3 className="mb-6 text-center text-lg font-semibold text-foreground">
-              Connect with Us
+              Contact Us / Support
             </h3>
 
             <div className="grid grid-cols-1 gap-6 text-center sm:grid-cols-3">
@@ -43,12 +43,12 @@ export function Footer() {
                 <h4 className="font-medium text-foreground">WhatsApp</h4>
                 <div className="flex flex-col gap-2">
                   <a
-                    href="https://wa.me/919743055967"
+                    href="https://wa.me/919741010710"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-muted-foreground hover:text-primary"
                   >
-                    Primary: <span className="font-semibold text-foreground">97430 55967</span>
+                    Bookings: <span className="font-semibold text-foreground">97410 10710</span>
                   </a>
                   <a
                     href="https://wa.me/918792021456"
@@ -56,7 +56,15 @@ export function Footer() {
                     rel="noopener noreferrer"
                     className="text-sm text-muted-foreground hover:text-primary"
                   >
-                    Support: <span className="font-semibold text-foreground">87920 21456</span>
+                    Support 1: <span className="font-semibold text-foreground">87920 21456</span>
+                  </a>
+                  <a
+                    href="https://wa.me/919743055967"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-muted-foreground hover:text-primary"
+                  >
+                    Support 2: <span className="font-semibold text-foreground">97430 55967</span>
                   </a>
                 </div>
               </div>
@@ -94,10 +102,10 @@ export function Footer() {
                 </div>
                 <h4 className="font-medium text-foreground">Email</h4>
                 <a
-                  href="mailto:shivaprasadtoggi45@gmail.com"
+                  href="mailto:vjpgs.official@gmail.com"
                   className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  <span className="font-semibold text-foreground">shivaprasadtoggi45@gmail.com</span>
+                  <span className="font-semibold text-foreground">vjpgs.official@gmail.com</span>
                 </a>
               </div>
             </div>

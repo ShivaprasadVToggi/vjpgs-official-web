@@ -9,7 +9,7 @@ import type { PG } from "@/lib/data"
 interface PGDetailModalProps {
     pg: PG | null
     onClose: () => void
-    onBookNow: () => void
+    onBookNow: (sharingType: string) => void
 }
 
 const amenityIcons: Record<string, React.ReactNode> = {
@@ -29,11 +29,17 @@ const amenityIcons: Record<string, React.ReactNode> = {
 
 export function PGDetailModal({ pg, onClose, onBookNow }: PGDetailModalProps) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
+    const [selectedSharing, setSelectedSharing] = useState<"single" | "double" | "triple" | "quad">("triple")
     const scrollContainerRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         if (pg) {
             document.body.style.overflow = 'hidden'
+            // Set default sharing to the lowest available option
+            if (pg.sharing_prices.quad) setSelectedSharing("quad")
+            else if (pg.sharing_prices.triple) setSelectedSharing("triple")
+            else if (pg.sharing_prices.double) setSelectedSharing("double")
+            else if (pg.sharing_prices.single) setSelectedSharing("single")
         }
         return () => {
             document.body.style.overflow = 'auto'
@@ -110,7 +116,7 @@ export function PGDetailModal({ pg, onClose, onBookNow }: PGDetailModalProps) {
                         <div
                             ref={scrollContainerRef}
                             onScroll={handleScroll}
-                            className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+                            className="flex h-full w-full overflow-x-auto snap-x snap-mandatory snap-stop-always scrollbar-hide"
                         >
                             {pg.carousel.map((img, index) => (
                                 <div key={index} className="relative h-full w-full flex-shrink-0 snap-center">
@@ -175,39 +181,62 @@ export function PGDetailModal({ pg, onClose, onBookNow }: PGDetailModalProps) {
                         {/* Description */}
                         <div>
                             <h3 className="text-lg font-semibold text-foreground mb-2">About</h3>
-                            <p className="text-sm text-muted-foreground leading-relaxed">{pg.description}</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed max-w-prose">{pg.description}</p>
                         </div>
 
-                        {/* Price Grid */}
+                        {/* Price Selection */}
                         <div>
-                            <h3 className="text-lg font-semibold text-foreground mb-3">Sharing Options</h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <h3 className="text-lg font-semibold text-foreground mb-3">Select Sharing Type</h3>
+                            <div className="flex flex-wrap gap-2">
                                 {pg.sharing_prices.single && (
-                                    <div className="border border-border rounded-lg p-3 text-center">
-                                        <p className="text-xs text-muted-foreground mb-1">Single</p>
-                                        <p className="text-lg font-bold text-green-600">₹{pg.sharing_prices.single.toLocaleString()}</p>
-                                    </div>
+                                    <button
+                                        onClick={() => setSelectedSharing("single")}
+                                        className={`px-4 py-2 rounded-lg border-2 transition-all ${selectedSharing === "single"
+                                            ? "border-primary bg-primary text-primary-foreground"
+                                            : "border-border bg-background hover:border-primary/50"
+                                            }`}
+                                    >
+                                        <p className="text-xs font-medium">Single</p>
+                                        <p className="text-sm font-bold">₹{pg.sharing_prices.single.toLocaleString()}</p>
+                                    </button>
                                 )}
                                 {pg.sharing_prices.double && (
-                                    <div className="border border-border rounded-lg p-3 text-center">
-                                        <p className="text-xs text-muted-foreground mb-1">Double</p>
-                                        <p className="text-lg font-bold text-green-600">₹{pg.sharing_prices.double.toLocaleString()}</p>
-                                    </div>
+                                    <button
+                                        onClick={() => setSelectedSharing("double")}
+                                        className={`px-4 py-2 rounded-lg border-2 transition-all ${selectedSharing === "double"
+                                            ? "border-primary bg-primary text-primary-foreground"
+                                            : "border-border bg-background hover:border-primary/50"
+                                            }`}
+                                    >
+                                        <p className="text-xs font-medium">Double</p>
+                                        <p className="text-sm font-bold">₹{pg.sharing_prices.double.toLocaleString()}</p>
+                                    </button>
                                 )}
                                 {pg.sharing_prices.triple && (
-                                    <div className="border border-border rounded-lg p-3 text-center">
-                                        <p className="text-xs text-muted-foreground mb-1">Triple</p>
-                                        <p className="text-lg font-bold text-green-600">₹{pg.sharing_prices.triple.toLocaleString()}</p>
-                                    </div>
+                                    <button
+                                        onClick={() => setSelectedSharing("triple")}
+                                        className={`px-4 py-2 rounded-lg border-2 transition-all ${selectedSharing === "triple"
+                                            ? "border-primary bg-primary text-primary-foreground"
+                                            : "border-border bg-background hover:border-primary/50"
+                                            }`}
+                                    >
+                                        <p className="text-xs font-medium">Triple</p>
+                                        <p className="text-sm font-bold">₹{pg.sharing_prices.triple.toLocaleString()}</p>
+                                    </button>
                                 )}
                                 {pg.sharing_prices.quad && (
-                                    <div className="border border-border rounded-lg p-3 text-center">
-                                        <p className="text-xs text-muted-foreground mb-1">Quad</p>
-                                        <p className="text-lg font-bold text-green-600">₹{pg.sharing_prices.quad.toLocaleString()}</p>
-                                    </div>
+                                    <button
+                                        onClick={() => setSelectedSharing("quad")}
+                                        className={`px-4 py-2 rounded-lg border-2 transition-all ${selectedSharing === "quad"
+                                            ? "border-primary bg-primary text-primary-foreground"
+                                            : "border-border bg-background hover:border-primary/50"
+                                            }`}
+                                    >
+                                        <p className="text-xs font-medium">Quad</p>
+                                        <p className="text-sm font-bold">₹{pg.sharing_prices.quad.toLocaleString()}</p>
+                                    </button>
                                 )}
                             </div>
-                            <p className="text-xs text-muted-foreground mt-2">*Prices shown are after VJ-PG's ₹2,000 discount</p>
                         </div>
 
                         {/* Amenities */}
@@ -241,13 +270,19 @@ export function PGDetailModal({ pg, onClose, onBookNow }: PGDetailModalProps) {
                 {/* Sticky Footer */}
                 <div className="absolute bottom-0 left-0 right-0 border-t border-border bg-background p-4 shadow-lg">
                     <div className="flex items-center justify-between gap-4">
-                        <div>
-                            <p className="text-sm text-muted-foreground line-through">₹{pg.ownerPrice.toLocaleString()}</p>
-                            <p className="text-xl font-bold text-green-600">₹{pg.price.toLocaleString()}/mo</p>
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                                <p className="text-sm text-muted-foreground line-through">₹{((pg.sharing_prices[selectedSharing] || 0) + 2000).toLocaleString()}</p>
+                                <span className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide">(Owner Price)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <p className="text-xl font-bold text-green-600">₹{(pg.sharing_prices[selectedSharing] || 0).toLocaleString()}/mo</p>
+                                <span className="text-[10px] text-green-600 uppercase font-bold tracking-wide">(VJ Price)</span>
+                            </div>
                         </div>
                         <Button
-                            onClick={onBookNow}
-                            className="bg-primary hover:bg-primary/90 px-6"
+                            onClick={() => onBookNow(selectedSharing)}
+                            className="bg-primary hover:bg-primary/90 px-6 h-12 text-base shadow-md transition-transform active:scale-95"
                         >
                             Confirm Discount
                         </Button>

@@ -13,9 +13,10 @@ interface BookingModalProps {
   onClose: () => void
   pgName: string
   pgPrice: number
+  preselectedSharing?: string
 }
 
-export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalProps) {
+export function BookingModal({ isOpen, onClose, pgName, pgPrice, preselectedSharing }: BookingModalProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [tokenId, setTokenId] = useState<string>("")
@@ -23,7 +24,7 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
     fullName: "",
     phoneNumber: "",
     collegeName: "",
-    sharingType: ""
+    sharingType: preselectedSharing || ""
   })
   const [isWhatsAppChecked, setIsWhatsAppChecked] = useState(false)
 
@@ -173,7 +174,7 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice }: BookingModalP
       }
 
       // Send to FormSubmit
-      await fetch("https://formsubmit.co/ajax/shivaprasadtoggi45@gmail.com", {
+      await fetch("https://formsubmit.co/ajax/vjpgs.official@gmail.com", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',

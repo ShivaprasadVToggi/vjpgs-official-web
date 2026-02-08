@@ -35,6 +35,7 @@ export function PGCard({ pg, displayDistance, displayCollege }: PGCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [selectedSharing, setSelectedSharing] = useState<string | undefined>(undefined)
 
   const savings = pg.ownerPrice - pg.price
   const location = `${pg.category} | ${displayCollege === "cambridge" ? "Cambridge" : "Garden City"}`
@@ -111,7 +112,7 @@ export function PGCard({ pg, displayDistance, displayCollege }: PGCardProps) {
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex h-full w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+            className="flex h-full w-full overflow-x-auto snap-x snap-mandatory snap-stop-always scrollbar-hide"
           >
             {pg.carousel.length > 0 ? (
               pg.carousel.map((img, index) => (
@@ -221,24 +222,33 @@ export function PGCard({ pg, displayDistance, displayCollege }: PGCardProps) {
         </CardContent>
 
         <CardFooter className="flex flex-col gap-3 border-t border-border p-4">
-          {/* Price Comparison */}
+          {/* Price Display */}
           <div className="flex w-full items-center justify-between">
-            <div className="flex flex-col">
-              <span className="text-sm text-red-500 line-through">
-                Owner Price: ₹{pg.ownerPrice.toLocaleString()}
-              </span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-green-600">₹{pg.price.toLocaleString()}</span>
-                <span className="text-sm font-medium text-green-600">/month</span>
-              </div>
-              <span className="text-xs font-medium text-green-600">VJ Price</span>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs text-red-500 line-through">Owner Price - ₹{pg.ownerPrice.toLocaleString()}</span>
+              <span className="text-2xl font-extrabold text-green-600">₹{pg.price.toLocaleString()} <span className="text-sm font-medium text-green-600">/month</span></span>
             </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex w-full gap-2">
+            <Button
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsDetailModalOpen(true)
+              }}
+              variant="outline"
+              className="flex-1"
+              suppressHydrationWarning
+            >
+              View Details
+            </Button>
             <Button
               onClick={(e) => {
                 e.stopPropagation()
                 setIsBookingModalOpen(true)
               }}
-              className="shrink-0 bg-primary hover:bg-primary/90"
+              className="flex-1 bg-primary hover:bg-primary/90"
               suppressHydrationWarning
             >
               Confirm Discount
@@ -252,12 +262,14 @@ export function PGCard({ pg, displayDistance, displayCollege }: PGCardProps) {
         onClose={() => setIsBookingModalOpen(false)}
         pgName={pg.name}
         pgPrice={pg.price}
+        preselectedSharing={selectedSharing}
       />
 
       <PGDetailModal
         pg={isDetailModalOpen ? pg : null}
         onClose={() => setIsDetailModalOpen(false)}
-        onBookNow={() => {
+        onBookNow={(sharingType) => {
+          setSelectedSharing(sharingType)
           setIsDetailModalOpen(false)
           setIsBookingModalOpen(true)
         }}

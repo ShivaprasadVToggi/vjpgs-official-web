@@ -12,21 +12,8 @@ export const metadata: Metadata = {
   description: 'Verified PGs near Cambridge & Garden City University. Book via VJ-PGs for ₹2,000 Flat Discount.',
   generator: 'v0.app',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: 'https://i.postimg.cc/T1Z4yLgV/Screenshot-2026-02-02-185432.png',
+    apple: 'https://i.postimg.cc/T1Z4yLgV/Screenshot-2026-02-02-185432.png',
   },
 }
 
