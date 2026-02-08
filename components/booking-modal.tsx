@@ -1,11 +1,11 @@
 import { useState } from "react"
-import { jsPDF } from "jspdf"
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Loader2, CheckCircle2, FileDown } from "lucide-react"
+import { Loader2, CheckCircle2, FileDown, AlertTriangle } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 
 interface BookingModalProps {
@@ -29,124 +29,122 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice, preselectedShar
   const [isWhatsAppChecked, setIsWhatsAppChecked] = useState(false)
 
   const generateTokenId = () => {
-    return "VJ-" + Math.floor(1000 + Math.random() * 9000);
+    return "VJ-" + Math.floor(10000 + Math.random() * 90000);
   }
 
-  const generatePDF = async (id: string) => {
-    const doc = new jsPDF()
-
-    const loadImage = (url: string): Promise<string> => {
-      return new Promise((resolve, reject) => {
-        fetch(url)
-          .then(response => response.blob())
-          .then(blob => {
-            const reader = new FileReader()
-            reader.onloadend = () => resolve(reader.result as string)
-            reader.onerror = reject
-            reader.readAsDataURL(blob)
-          })
-          .catch(reject)
-      })
-    }
-
+  const generatePDF = async (id: string, sharingPrice: number) => {
     try {
-      // Load Logo
-      try {
-        const logoData = await loadImage("https://i.postimg.cc/657XPkv7/logo.png")
-        doc.addImage(logoData, "PNG", 85, 10, 40, 40)
-      } catch (e) {
-        console.error("Logo failed to load", e)
-      }
+      // 1. Fetch the template PDF
+      const templateUrl = '/token_template.pdf'
+      const existingPdfBytes = await fetch(templateUrl).then(res => res.arrayBuffer())
 
-      // 1. Professional Blue Border
-      const primaryBlue = "#2563EB"
-      doc.setDrawColor(37, 99, 235) // #2563EB
-      doc.setLineWidth(1)
-      doc.rect(5, 5, 200, 287) // A4 Border
+      // 2. Load the PDF
+      const pdfDoc = await PDFDocument.load(existingPdfBytes)
 
-      // 2. Header
-      doc.setFontSize(22)
-      doc.setTextColor(37, 99, 235)
-      doc.setFont("helvetica", "bold")
-      doc.text("VJ-PG's OFFICIAL DISCOUNT PASS", 105, 60, { align: "center" })
+      // 3. Embed font
+      const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
-      // 3. Token Details Section
-      doc.setDrawColor(200, 200, 200)
-      doc.setLineWidth(0.5)
-      doc.setFillColor(250, 250, 250)
-      doc.roundedRect(30, 75, 150, 105, 3, 3, "FD") // Filled box
+      // 4. Get the first page
+      const pages = pdfDoc.getPages()
+      const page = pages[0]
+      const { height } = page.getSize()
 
-      doc.setFontSize(14)
-      doc.setTextColor(0, 0, 0)
+      // 1. PRECISION CLEARANCE (Shifted to match new table position)
+      page.drawRectangle({
+        x: 105,   // Shifted right from 55
+        y: 535,   // Shifted down slightly to protect Part B text
+        width: 450,
+        height: 110,
+        color: rgb(1, 1, 1),
+      });
 
-      let yPos = 90
-      const leftX = 40
-      const valueX = 90
+      // 2. THE RE-POSITIONED TABLE STRUCTURE
+      const tableConfig = {
+        x: 110,           // Shifted RIGHT (from 60) to sit opposite the logo area
+        width: 430,       // Slightly narrower to stay safe on the right margin
+        startY: 640,      // Shifted DOWN (from 652) towards Part B
+        rowHeight: 18,    // Keeping the compact rows
+        colSplit: 160,
+      };
 
-      const addDetail = (label: string, value: string, isBoldValue = false) => {
-        doc.setFont("helvetica", "bold")
-        doc.text(label, leftX, yPos)
-        doc.setFont("helvetica", isBoldValue ? "bold" : "normal")
-        doc.text(value, valueX, yPos)
-        yPos += 14
-      }
+      // Get issue date
+      const issueDate = new Date().toLocaleDateString('en-IN')
 
-      addDetail("Pass ID:", id, true)
-      addDetail("Date of Issue:", new Date().toLocaleDateString())
-      addDetail("Student Name:", formData.fullName)
-      addDetail("College:", formData.collegeName)
-      addDetail("Target PG:", pgName)
-      addDetail("Sharing Type:", formData.sharingType)
-      doc.setTextColor(37, 99, 235) // Blue for discount
-      addDetail("Discount:", "FLAT ₹2,000 OFF", true)
-      doc.setTextColor(0, 0, 0) // Reset
+      const tableData = [
+        ["TOKEN ID:", id],
+        ["ISSUED DATE:", issueDate],
+        ["STUDENT NAME:", formData.fullName],
+        ["PG PROPERTY NAME:", pgName],
+        ["SHARING TYPE:", formData.sharingType],
+        ["FINAL PRICE (1st MONTH):", `Rs. ${sharingPrice.toLocaleString()}/-`]
+      ];
 
-      // 4. Digital Seal
-      const sealX = 150
-      const sealY = 220
+      // 3. DRAW THE TABLE
+      tableData.forEach((row, i) => {
+        const y = tableConfig.startY - (i * tableConfig.rowHeight);
 
-      doc.setDrawColor(37, 99, 235)
-      doc.setLineWidth(1)
-      doc.circle(sealX, sealY, 18)
-      doc.circle(sealX, sealY, 15)
+        // Draw Horizontal Line
+        page.drawLine({
+          start: { x: tableConfig.x, y },
+          end: { x: tableConfig.x + tableConfig.width, y },
+          thickness: 0.6,
+          color: rgb(0, 0, 0),
+        });
 
-      doc.setFontSize(8)
-      doc.setTextColor(37, 99, 235)
-      doc.setFont("helvetica", "bold")
-      doc.text("VJ-PG's VERIFIED", sealX, sealY - 3, { align: "center" })
-      doc.text("DISCOUNT GUARANTEED", sealX, sealY + 4, { align: "center" })
+        // Draw Label (Left Side)
+        page.drawText(row[0], {
+          x: tableConfig.x + 6,
+          y: y - 12,
+          size: 8.5,
+          font,
+          color: rgb(0, 0, 0),
+        });
 
-      // Signature
-      doc.setFont("times", "italic")
-      doc.setFontSize(12)
-      doc.text("Authorized by VJ-PGs Founders", sealX, sealY + 30, { align: "center" })
+        // Draw Value (Right Side)
+        page.drawText(row[1], {
+          x: tableConfig.x + tableConfig.colSplit + 8,
+          y: y - 12,
+          size: 8.5,
+          font,
+          color: i === 5 ? rgb(0, 0.5, 0) : rgb(0, 0, 0),
+        });
+      });
 
-      // 5. Legal Terms
-      doc.setFont("helvetica", "normal")
-      doc.setFontSize(9)
-      doc.setTextColor(100, 100, 100)
+      // Draw the bottom-most line
+      const bottomY = tableConfig.startY - (6 * tableConfig.rowHeight);
+      page.drawLine({
+        start: { x: tableConfig.x, y: bottomY },
+        end: { x: tableConfig.x + tableConfig.width, y: bottomY },
+        thickness: 0.6,
+        color: rgb(0, 0, 0),
+      });
 
-      let termsY = 260
-      const terms = [
-        "1. This pass guarantees a FLAT ₹2,000 discount on the FIRST MONTH'S RENT only.",
-        "2. Standard rent applies from the second month onwards as per PG owner's policy.",
-        "3. VJ-PG's is a discovery and brokerage platform. We are NOT responsible for any future disputes,",
-        "   safety issues, food quality, or conduct within the PG premises.",
-        "4. The student must present this digital or printed pass to the PG owner during the first visit to claim the benefit.",
-        "5. This token is non-transferable and valid for 7 days from the date of issue."
-      ]
+      // Draw Vertical Lines
+      [0, tableConfig.colSplit, tableConfig.width].forEach(offset => {
+        page.drawLine({
+          start: { x: tableConfig.x + offset, y: tableConfig.startY },
+          end: { x: tableConfig.x + offset, y: bottomY },
+          thickness: 0.6,
+          color: rgb(0, 0, 0),
+        });
+      });
 
-      terms.forEach(line => {
-        doc.text(line, 20, termsY)
-        termsY += 5
-      })
 
-      // Save
-      const safeName = formData.fullName.replace(/\s+/g, '_')
-      doc.save(`VJ_Pass_${safeName}.pdf`)
+
+      // 9. Save the PDF
+      const pdfBytes = await pdfDoc.save()
+
+      // 10. Trigger download
+      const blob = new Blob([pdfBytes as any], { type: 'application/pdf' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `VJ_Token_${id}.pdf`
+      link.click()
+      URL.revokeObjectURL(url)
 
     } catch (error) {
-      console.error("PDF Generation Error", error)
+      console.error("PDF generation failed:", error)
       alert("Could not generate PDF. Please try again.")
     }
   }
@@ -155,25 +153,29 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice, preselectedShar
     setIsLoading(true)
 
     try {
-      // Step A: Generate ID
+      // Step 1: Generate Token ID
       const newId = generateTokenId()
       setTokenId(newId)
 
-      // Prepare form data for FormSubmit
+      // Step 2: Get issue date
+      const issueDate = new Date().toLocaleDateString('en-IN')
+
+      // Step 3: Prepare form data for FormSubmit with Token ID in subject
       const submissionData = {
-        _subject: `New Booking Token: ${newId}`,
+        _subject: `NEW BOOKING: ${newId} - ${formData.fullName}`,
         _captcha: "false",
         "Token ID": newId,
+        "Issue Date": issueDate,
         "PG Name": pgName,
-        "PG Price": `₹${pgPrice}`,
+        "Sharing Type": formData.sharingType,
+        "Price": `₹${pgPrice}`,
         "Full Name": formData.fullName,
         "Phone Number": formData.phoneNumber,
         "College Name": formData.collegeName,
-        "Sharing Type": formData.sharingType,
         "Is WhatsApp": "true"
       }
 
-      // Send to FormSubmit
+      // Step 4: Send to FormSubmit
       await fetch("https://formsubmit.co/ajax/vjpgs.official@gmail.com", {
         method: "POST",
         headers: {
@@ -183,7 +185,10 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice, preselectedShar
         body: JSON.stringify(submissionData)
       })
 
-      // Step B: Show Success State (No Auto Download/Redirect)
+      // Step 5: Generate and download PDF
+      await generatePDF(newId, pgPrice)
+
+      // Step 6: Show Success State
       setIsSuccess(true)
       setIsLoading(false)
 
@@ -223,16 +228,19 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice, preselectedShar
             </div>
             <h3 className="text-xl font-bold text-foreground">Token #{tokenId} Generated!</h3>
             <p className="mt-2 text-muted-foreground text-sm max-w-[280px]">
-              Thank You! We have received your request. Download your PDF below.
+              Token sent to VJ Team! PDF Downloading...
             </p>
 
-            <Button
-              className="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
-              onClick={() => generatePDF(tokenId)}
-            >
-              <FileDown className="mr-2 h-4 w-4" />
-              Download Verified PDF
-            </Button>
+            <div className="mt-6 flex items-start gap-4 rounded-r-lg border-l-4 border-amber-400 bg-amber-50 p-4 text-left w-full max-w-sm">
+              <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+              <div className="text-sm font-medium text-amber-800">
+                ACTION REQUIRED: To claim your discount, you MUST take a physical printout of this token and submit it to the PG Owner during your visit.
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs text-muted-foreground max-w-[300px]">
+              Please check your downloads folder for <span className="font-semibold">VJ_Token_{tokenId}.pdf</span>
+            </p>
           </div>
         ) : (
           <>
@@ -319,7 +327,7 @@ export function BookingModal({ isOpen, onClose, pgName, pgPrice, preselectedShar
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating Token...
+                  Securing Token...
                 </>
               ) : (
                 "Send for Verification & Download"
